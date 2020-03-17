@@ -1,0 +1,88 @@
+grammar Calc;
+
+@header {
+package com.github.jobop.lafite.LONGerpreter;
+}
+
+prog
+    : stat+
+    ;
+
+stat
+    : assign
+    | ret_expr
+    | out_expr
+    ;
+
+
+
+assign
+    : ID ':=' expr            # assignExprToId
+    ;
+
+ret_expr
+    :RET                     #ret
+    |RET LONG                 #retLONG
+    |RET ID                  #retID
+    |RET StringLiteral       #retStr
+    ;
+
+out_expr
+    :OUT                     #par
+    |OUT LONG                 #outLONG
+    |OUT ID                  #outID
+    |OUT StringLiteral       #outStr
+    ;
+
+expr
+    :expr op=(MUL|DIV) expr  # MulDiv
+    | expr op=(ADD|SUB) expr # AddSub
+    | '(' expr ')'           # parens
+    | LONG                    # LONG
+    | ID                     # id
+    ;
+
+
+
+
+
+MUL : '*' ;
+
+DIV : '/' ;
+
+ADD : '+' ;
+
+SUB : '-' ;
+
+OUT : 'out';
+
+RET : 'return' ;
+
+ID  : [a-zA-Z]+ ;
+
+LONG : [0-9]+ ;
+
+WS  : [ \t\r\n]+ -> skip ;    // toss out whitespace
+
+
+COMMENT
+    :   '/*' .*? '*/' -> skip
+    ;
+
+LINE_COMMENT
+    :   '//' ~[\r\n]* -> skip
+    ;
+
+StringLiteral
+	:	'"' StringCharacters? '"'
+	;
+
+fragment
+StringCharacters
+	:	StringCharacter+
+	;
+fragment
+StringCharacter
+	:	~["\\\r\n]
+	;
+
