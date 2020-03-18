@@ -418,8 +418,7 @@ public class ProcessEngine implements IProcessEngine {
                 //从栈顶取2个元素
                 Long o1 = (Long) vmStack.peek().pop();
                 Long o2 = (Long) vmStack.peek().pop();
-                //判断元素2大于元素1是否
-                if (o1 == 1l && o2 == 2l) {
+                if (o1 == 1l && o2 == 1l) {
                     vmStack.peek().push(Long.valueOf(1));
                 } else {
                     vmStack.peek().push(Long.valueOf(0));
@@ -435,8 +434,7 @@ public class ProcessEngine implements IProcessEngine {
                 //从栈顶取2个元素
                 Long o1 = (Long) vmStack.peek().pop();
                 Long o2 = (Long) vmStack.peek().pop();
-                //判断元素2大于元素1是否
-                if (o1 == 1l || o2 == 2l) {
+                if (o1 == 1l || o2 == 1l) {
                     vmStack.peek().push(Long.valueOf(1));
                 } else {
                     vmStack.peek().push(Long.valueOf(0));

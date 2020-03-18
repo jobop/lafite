@@ -14,9 +14,9 @@ import lombok.Data;
 @Data
 public class ExprStmtWithTwo extends ExprStmt {
     private int lineNum;
-    ExprStmt left = null;
+    SyntaxNode left = null;
     Operator op;
-    ExprStmt right = null;
+    SyntaxNode right = null;
 
 
     @Override

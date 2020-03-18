@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * Created by Enzo Cotter on 2020/3/14.
  */
-@Builder
+@Builder(toBuilder = true)
 @Data
 public class Namespace extends SyntaxNode {
     private int lineNum;
@@ -31,7 +31,7 @@ public class Namespace extends SyntaxNode {
 
     @Override
     public void dumpSourceCode() {
-        System.out.println(nameSpaceName + " ");
+        System.out.println("namespace"+" "+nameSpaceName);
         for (SyntaxNode node : nodes) {
             node.dumpSourceCode();
         }

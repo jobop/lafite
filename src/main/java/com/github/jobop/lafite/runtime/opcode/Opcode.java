@@ -1,13 +1,5 @@
 package com.github.jobop.lafite.runtime.opcode;
 
-import com.sun.org.apache.bcel.internal.generic.*;
-import com.sun.tools.classfile.Instruction;
-import com.sun.tools.classfile.Instruction.Kind;
-import org.antlr.v4.runtime.ParserRuleContext;
-
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * Created by Enzo Cotter on 2020/3/9.
  */

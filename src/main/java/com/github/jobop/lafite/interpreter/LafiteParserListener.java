@@ -112,17 +112,15 @@ public interface LafiteParserListener extends ParseTreeListener {
 	 */
 	void exitExpressionList(LafiteParser.ExpressionListContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code func_}
-	 * labeled alternative in {@link LafiteParser#functionDecl}.
+	 * Enter a parse tree produced by {@link LafiteParser#functionDecl}.
 	 * @param ctx the parse tree
 	 */
-	void enterFunc_(LafiteParser.Func_Context ctx);
+	void enterFunctionDecl(LafiteParser.FunctionDeclContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code func_}
-	 * labeled alternative in {@link LafiteParser#functionDecl}.
+	 * Exit a parse tree produced by {@link LafiteParser#functionDecl}.
 	 * @param ctx the parse tree
 	 */
-	void exitFunc_(LafiteParser.Func_Context ctx);
+	void exitFunctionDecl(LafiteParser.FunctionDeclContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code varDecl_}
 	 * labeled alternative in {@link LafiteParser#varDecl}.
@@ -406,75 +404,119 @@ public interface LafiteParserListener extends ParseTreeListener {
 	 */
 	void exitParameterDecl(LafiteParser.ParameterDeclContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link LafiteParser#expression}.
+	 * Enter a parse tree produced by the {@code primaryExpr_}
+	 * labeled alternative in {@link LafiteParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void enterExpression(LafiteParser.ExpressionContext ctx);
+	void enterPrimaryExpr_(LafiteParser.PrimaryExpr_Context ctx);
 	/**
-	 * Exit a parse tree produced by {@link LafiteParser#expression}.
+	 * Exit a parse tree produced by the {@code primaryExpr_}
+	 * labeled alternative in {@link LafiteParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void exitExpression(LafiteParser.ExpressionContext ctx);
+	void exitPrimaryExpr_(LafiteParser.PrimaryExpr_Context ctx);
 	/**
-	 * Enter a parse tree produced by the {@code LprimaryExpr_primaryExpr}
-	 * labeled alternative in {@link LafiteParser#primaryExpr}.
+	 * Enter a parse tree produced by the {@code unaryExpr_}
+	 * labeled alternative in {@link LafiteParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void enterLprimaryExpr_primaryExpr(LafiteParser.LprimaryExpr_primaryExprContext ctx);
+	void enterUnaryExpr_(LafiteParser.UnaryExpr_Context ctx);
 	/**
-	 * Exit a parse tree produced by the {@code LprimaryExpr_primaryExpr}
-	 * labeled alternative in {@link LafiteParser#primaryExpr}.
+	 * Exit a parse tree produced by the {@code unaryExpr_}
+	 * labeled alternative in {@link LafiteParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void exitLprimaryExpr_primaryExpr(LafiteParser.LprimaryExpr_primaryExprContext ctx);
+	void exitUnaryExpr_(LafiteParser.UnaryExpr_Context ctx);
 	/**
-	 * Enter a parse tree produced by the {@code LprimaryExpr_primaryExpr_operand_}
-	 * labeled alternative in {@link LafiteParser#primaryExpr}.
+	 * Enter a parse tree produced by the {@code orExpr_}
+	 * labeled alternative in {@link LafiteParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void enterLprimaryExpr_primaryExpr_operand_(LafiteParser.LprimaryExpr_primaryExpr_operand_Context ctx);
+	void enterOrExpr_(LafiteParser.OrExpr_Context ctx);
 	/**
-	 * Exit a parse tree produced by the {@code LprimaryExpr_primaryExpr_operand_}
-	 * labeled alternative in {@link LafiteParser#primaryExpr}.
+	 * Exit a parse tree produced by the {@code orExpr_}
+	 * labeled alternative in {@link LafiteParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void exitLprimaryExpr_primaryExpr_operand_(LafiteParser.LprimaryExpr_primaryExpr_operand_Context ctx);
+	void exitOrExpr_(LafiteParser.OrExpr_Context ctx);
 	/**
-	 * Enter a parse tree produced by the {@code LinvokeParam_IDENTIFIER_}
-	 * labeled alternative in {@link LafiteParser#invokeParam}.
+	 * Enter a parse tree produced by the {@code addsubExpr_}
+	 * labeled alternative in {@link LafiteParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void enterLinvokeParam_IDENTIFIER_(LafiteParser.LinvokeParam_IDENTIFIER_Context ctx);
+	void enterAddsubExpr_(LafiteParser.AddsubExpr_Context ctx);
 	/**
-	 * Exit a parse tree produced by the {@code LinvokeParam_IDENTIFIER_}
-	 * labeled alternative in {@link LafiteParser#invokeParam}.
+	 * Exit a parse tree produced by the {@code addsubExpr_}
+	 * labeled alternative in {@link LafiteParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void exitLinvokeParam_IDENTIFIER_(LafiteParser.LinvokeParam_IDENTIFIER_Context ctx);
+	void exitAddsubExpr_(LafiteParser.AddsubExpr_Context ctx);
 	/**
-	 * Enter a parse tree produced by the {@code LinvokeParam_index_}
-	 * labeled alternative in {@link LafiteParser#invokeParam}.
+	 * Enter a parse tree produced by the {@code muldivmodExpr_}
+	 * labeled alternative in {@link LafiteParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void enterLinvokeParam_index_(LafiteParser.LinvokeParam_index_Context ctx);
+	void enterMuldivmodExpr_(LafiteParser.MuldivmodExpr_Context ctx);
 	/**
-	 * Exit a parse tree produced by the {@code LinvokeParam_index_}
-	 * labeled alternative in {@link LafiteParser#invokeParam}.
+	 * Exit a parse tree produced by the {@code muldivmodExpr_}
+	 * labeled alternative in {@link LafiteParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void exitLinvokeParam_index_(LafiteParser.LinvokeParam_index_Context ctx);
+	void exitMuldivmodExpr_(LafiteParser.MuldivmodExpr_Context ctx);
 	/**
-	 * Enter a parse tree produced by the {@code LinvokeParam_arguments_}
-	 * labeled alternative in {@link LafiteParser#invokeParam}.
+	 * Enter a parse tree produced by the {@code andExpr_}
+	 * labeled alternative in {@link LafiteParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void enterLinvokeParam_arguments_(LafiteParser.LinvokeParam_arguments_Context ctx);
+	void enterAndExpr_(LafiteParser.AndExpr_Context ctx);
 	/**
-	 * Exit a parse tree produced by the {@code LinvokeParam_arguments_}
-	 * labeled alternative in {@link LafiteParser#invokeParam}.
+	 * Exit a parse tree produced by the {@code andExpr_}
+	 * labeled alternative in {@link LafiteParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void exitLinvokeParam_arguments_(LafiteParser.LinvokeParam_arguments_Context ctx);
+	void exitAndExpr_(LafiteParser.AndExpr_Context ctx);
+	/**
+	 * Enter a parse tree produced by the {@code compareExpr_}
+	 * labeled alternative in {@link LafiteParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterCompareExpr_(LafiteParser.CompareExpr_Context ctx);
+	/**
+	 * Exit a parse tree produced by the {@code compareExpr_}
+	 * labeled alternative in {@link LafiteParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitCompareExpr_(LafiteParser.CompareExpr_Context ctx);
+	/**
+	 * Enter a parse tree produced by {@link LafiteParser#twoExpr}.
+	 * @param ctx the parse tree
+	 */
+	void enterTwoExpr(LafiteParser.TwoExprContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link LafiteParser#twoExpr}.
+	 * @param ctx the parse tree
+	 */
+	void exitTwoExpr(LafiteParser.TwoExprContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link LafiteParser#primaryExpr}.
+	 * @param ctx the parse tree
+	 */
+	void enterPrimaryExpr(LafiteParser.PrimaryExprContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link LafiteParser#primaryExpr}.
+	 * @param ctx the parse tree
+	 */
+	void exitPrimaryExpr(LafiteParser.PrimaryExprContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link LafiteParser#invokeParam}.
+	 * @param ctx the parse tree
+	 */
+	void enterInvokeParam(LafiteParser.InvokeParamContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link LafiteParser#invokeParam}.
+	 * @param ctx the parse tree
+	 */
+	void exitInvokeParam(LafiteParser.InvokeParamContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link LafiteParser#unaryExpr}.
 	 * @param ctx the parse tree
@@ -486,53 +528,15 @@ public interface LafiteParserListener extends ParseTreeListener {
 	 */
 	void exitUnaryExpr(LafiteParser.UnaryExprContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code Loperand_literal_}
-	 * labeled alternative in {@link LafiteParser#operand}.
+	 * Enter a parse tree produced by {@link LafiteParser#operand}.
 	 * @param ctx the parse tree
 	 */
-	void enterLoperand_literal_(LafiteParser.Loperand_literal_Context ctx);
+	void enterOperand(LafiteParser.OperandContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code Loperand_literal_}
-	 * labeled alternative in {@link LafiteParser#operand}.
+	 * Exit a parse tree produced by {@link LafiteParser#operand}.
 	 * @param ctx the parse tree
 	 */
-	void exitLoperand_literal_(LafiteParser.Loperand_literal_Context ctx);
-	/**
-	 * Enter a parse tree produced by the {@code Loperand_operandName_}
-	 * labeled alternative in {@link LafiteParser#operand}.
-	 * @param ctx the parse tree
-	 */
-	void enterLoperand_operandName_(LafiteParser.Loperand_operandName_Context ctx);
-	/**
-	 * Exit a parse tree produced by the {@code Loperand_operandName_}
-	 * labeled alternative in {@link LafiteParser#operand}.
-	 * @param ctx the parse tree
-	 */
-	void exitLoperand_operandName_(LafiteParser.Loperand_operandName_Context ctx);
-	/**
-	 * Enter a parse tree produced by the {@code Loperand_methodExpr_}
-	 * labeled alternative in {@link LafiteParser#operand}.
-	 * @param ctx the parse tree
-	 */
-	void enterLoperand_methodExpr_(LafiteParser.Loperand_methodExpr_Context ctx);
-	/**
-	 * Exit a parse tree produced by the {@code Loperand_methodExpr_}
-	 * labeled alternative in {@link LafiteParser#operand}.
-	 * @param ctx the parse tree
-	 */
-	void exitLoperand_methodExpr_(LafiteParser.Loperand_methodExpr_Context ctx);
-	/**
-	 * Enter a parse tree produced by the {@code Loperand_expression_}
-	 * labeled alternative in {@link LafiteParser#operand}.
-	 * @param ctx the parse tree
-	 */
-	void enterLoperand_expression_(LafiteParser.Loperand_expression_Context ctx);
-	/**
-	 * Exit a parse tree produced by the {@code Loperand_expression_}
-	 * labeled alternative in {@link LafiteParser#operand}.
-	 * @param ctx the parse tree
-	 */
-	void exitLoperand_expression_(LafiteParser.Loperand_expression_Context ctx);
+	void exitOperand(LafiteParser.OperandContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link LafiteParser#literal}.
 	 * @param ctx the parse tree
@@ -554,29 +558,15 @@ public interface LafiteParserListener extends ParseTreeListener {
 	 */
 	void exitBasicLit(LafiteParser.BasicLitContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code LoperandName_IDENTIFIER}
-	 * labeled alternative in {@link LafiteParser#operandName}.
+	 * Enter a parse tree produced by {@link LafiteParser#operandName}.
 	 * @param ctx the parse tree
 	 */
-	void enterLoperandName_IDENTIFIER(LafiteParser.LoperandName_IDENTIFIERContext ctx);
+	void enterOperandName(LafiteParser.OperandNameContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code LoperandName_IDENTIFIER}
-	 * labeled alternative in {@link LafiteParser#operandName}.
+	 * Exit a parse tree produced by {@link LafiteParser#operandName}.
 	 * @param ctx the parse tree
 	 */
-	void exitLoperandName_IDENTIFIER(LafiteParser.LoperandName_IDENTIFIERContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code LqualifiedIdent_}
-	 * labeled alternative in {@link LafiteParser#operandName}.
-	 * @param ctx the parse tree
-	 */
-	void enterLqualifiedIdent_(LafiteParser.LqualifiedIdent_Context ctx);
-	/**
-	 * Exit a parse tree produced by the {@code LqualifiedIdent_}
-	 * labeled alternative in {@link LafiteParser#operandName}.
-	 * @param ctx the parse tree
-	 */
-	void exitLqualifiedIdent_(LafiteParser.LqualifiedIdent_Context ctx);
+	void exitOperandName(LafiteParser.OperandNameContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code LcallFunc}
 	 * labeled alternative in {@link LafiteParser#qualifiedIdent}.

@@ -1,8 +1,11 @@
 package com.github.jobop.lafite.interpreter;
 
-import com.github.jobop.lafite.syntax.Namespace;
-import com.github.jobop.lafite.syntax.SourceStmt;
-import com.github.jobop.lafite.syntax.SyntaxNode;
+import com.alibaba.fastjson.JSON;
+import com.github.jobop.lafite.compiler.Compiler;
+import com.github.jobop.lafite.syntax.*;
+import com.github.jobop.lafite.syntax.expr.*;
+import com.github.jobop.lafite.syntax.expr.Operator;
+import com.github.jobop.lafite.utils.TypeUtils;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.RuleNode;
@@ -10,383 +13,265 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 /**
  * Created by Enzo Cotter on 2020/3/18.
  */
-public class LafiteParseVisitorImpl extends LafiteParserBaseVisitor {
+public class LafiteParseVisitorImpl extends LafiteParserBaseVisitor<Object> {
+    //TODO:
+    private Namespace currentNamespace;
+
+    private FunctionStmt currentFunction;
+    private SourceStmt currentSource;
+
+
+    private Stack<SyntaxNode> nodeStack = new Stack<>();
+
+    private int dealingFunctionCount = 0;
+
     @Override
     public SourceStmt visitSourceFile(LafiteParser.SourceFileContext ctx) {
 
-        List<Namespace> namespaces = new ArrayList<>();
+        //解析namespace
+        currentNamespace = (Namespace) visit(ctx.namespaceClause());
 
-
-        for (LafiteParser.NamespaceClauseContext nsContext : ctx.namespaceClause()) {
-            namespaces.add((Namespace) visit(nsContext));
+        //解析变量定义
+        List<SyntaxNode> nodes = new ArrayList<>();
+        if (null != ctx.shortVarDecl()) {
+            for (LafiteParser.ShortVarDeclContext context : ctx.shortVarDecl()) {
+                nodes.add((SyntaxNode) visit(context));
+            }
         }
 
-        return SourceStmt.builder().lineNum(ctx.getAltNumber())
-                .namespaces(namespaces)
-                .build();
+
+        if (null != ctx.functionDecl()) {
+            for (LafiteParser.FunctionDeclContext functionDecl : ctx.functionDecl()) {
+                nodes.add((SyntaxNode) visit(functionDecl));
+            }
+        }
+
+
+        //重新生成namespace
+        currentNamespace = currentNamespace.toBuilder().nodes(nodes).build();
+
+        currentSource = SourceStmt.builder().namespace(currentNamespace).build();
+        return currentSource;
+
     }
 
     @Override
     public Namespace visitNamespaceClause(LafiteParser.NamespaceClauseContext ctx) {
-        List<SyntaxNode> nodes = new ArrayList<>();
+        this.currentNamespace = Namespace.builder().nameSpaceName(ctx.IDENTIFIER().getText()).build();
 
-        for (ParseTree node : ctx.children) {
-            nodes.add((SyntaxNode) visit(node));
+        return this.currentNamespace;
+    }
+
+
+    @Override
+    public SyntaxNode visitShortVarDecl(LafiteParser.ShortVarDeclContext ctx) {
+        SyntaxNode shortVarDecl = null;
+
+
+        ////变量 IdentifierListContext
+        List<String> identifierNodes = (List<String>) visit(ctx.identifierList());
+
+
+        //表达式 ExpressionListContext
+        ExprList exprlist = (ExprList) visit(ctx.expressionList());
+
+
+        //要看是哪里来的，决定生成什么对象
+        if (dealingFunctionCount == 0) {
+            //栈外
+            shortVarDecl = GlobalVarDeclMultiStmt.builder().dataNames(identifierNodes).data(exprlist).build();
+        } else {
+            //栈内
+            shortVarDecl = LocalVarDeclMultiStmt.builder().dataNames(identifierNodes).data(exprlist).build();
+        }
+        return shortVarDecl;
+    }
+
+    //解析形如 aaa,bbb,ccc这种变量列表
+    @Override
+    public List<String> visitIdentifierList(LafiteParser.IdentifierListContext ctx) {
+        List<String> nodes = new ArrayList<>();
+        for (TerminalNode idCtx : ctx.IDENTIFIER()) {
+            nodes.add(idCtx.getText());
+        }
+        return nodes;
+    }
+
+    //解析型如a,1,fuck(a,b,c),aa[1],a+1这种表达式列表
+
+    @Override
+    public ExprList visitExpressionList(LafiteParser.ExpressionListContext ctx) {
+
+        List<SyntaxNode> exprNodes = new ArrayList<>();
+        for (LafiteParser.ExpressionContext expCtx : ctx.expression()) {
+
+            exprNodes.add((SyntaxNode) visit(expCtx));
+        }
+        return ExprList.builder().exprs(exprNodes).build();
+    }
+
+
+    //解析表达式 start:
+    //表达式匹配多种规则，这里按照顺序解释
+    //有可能是primaryExpr， unaryExpr ，expression op expression这些，所以都要解释,根据不同规则
+
+    //TODO:处理方法调用之类，这里要拆分(这里不能返回null，如果返回null就跟踪不下去了)
+//    @Override
+//    public SyntaxNode visitPrimaryExpr_(LafiteParser.PrimaryExpr_Context ctx) {
+//        return super.visitPrimaryExpr_(ctx);
+//    }
+
+    //处理操作数名（等号右边的变量名）
+    @Override
+    public Object visitOperandName(LafiteParser.OperandNameContext ctx) {
+        if (null != ctx.IDENTIFIER()) {
+            return ExprStmtIdentify.builder().idName(ctx.getText()).build();
+        } else if (null != ctx.qualifiedIdent()) {
+            return null;
+        }
+        return null;
+
+    }
+
+
+    //处理基本字面量
+
+
+    @Override
+    public ExprStmtData visitBasicLit(LafiteParser.BasicLitContext ctx) {
+        //区分数字，string double long nil
+        String lit = null;
+        if (null != ctx.DECIMAL_LIT()) {
+            lit = ctx.DECIMAL_LIT().getText();//long
         }
 
-        return Namespace.builder().lineNum(ctx.getAltNumber()).nameSpaceName(ctx.IDENTIFIER()
-                .getText())
-                .nodes(nodes)
-                .build();
-    }
+        if (null != ctx.FLOAT_LIT()) {
+            lit = ctx.FLOAT_LIT().getText();
+        }
+        if (null != ctx.string_()) {
+            lit = ctx.string_().getText();
+        }
+        if (null != ctx.NIL_LIT()) {
+            //TODO:支持nil
+            lit = ctx.NIL_LIT().getText();
+        }
+        if (null == lit) {
+            throw new RuntimeException("parse lit fail");
+        }
 
-    @Override
-    public Object visitImportDecl(LafiteParser.ImportDeclContext ctx) {
-        return null;
-    }
+        return ExprStmtData.builder().data(TypeUtils.transferType(lit)).build();
 
-    @Override
-    public Object visitImportSpec(LafiteParser.ImportSpecContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitImportPath(LafiteParser.ImportPathContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitDeclaration(LafiteParser.DeclarationContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitDeclaration_constDecl(LafiteParser.Declaration_constDeclContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitConstSpec(LafiteParser.ConstSpecContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitIdentifierList(LafiteParser.IdentifierListContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitExpressionList(LafiteParser.ExpressionListContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitFunc_(LafiteParser.Func_Context ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitVarDecl_(LafiteParser.VarDecl_Context ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitVarSpec(LafiteParser.VarSpecContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitBlock(LafiteParser.BlockContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitStatementList(LafiteParser.StatementListContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitStatement(LafiteParser.StatementContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitSimpleStmt(LafiteParser.SimpleStmtContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitExpressionStmt(LafiteParser.ExpressionStmtContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitIncDecStmt(LafiteParser.IncDecStmtContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitAssignment(LafiteParser.AssignmentContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitAssign_op(LafiteParser.Assign_opContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitShortVarDecl(LafiteParser.ShortVarDeclContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitEmptyStmt(LafiteParser.EmptyStmtContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitReturnStmt(LafiteParser.ReturnStmtContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitBreakStmt(LafiteParser.BreakStmtContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitContinueStmt(LafiteParser.ContinueStmtContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitIfStmt(LafiteParser.IfStmtContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitRecvStmt(LafiteParser.RecvStmtContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitForStmt(LafiteParser.ForStmtContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitForClause(LafiteParser.ForClauseContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitRangeClause(LafiteParser.RangeClauseContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitLaStmt(LafiteParser.LaStmtContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitArrayLength(LafiteParser.ArrayLengthContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitMethodSpec(LafiteParser.MethodSpecContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitFunctionType(LafiteParser.FunctionTypeContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitSignature(LafiteParser.SignatureContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitResult(LafiteParser.ResultContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitParameters(LafiteParser.ParametersContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitParameterDecl(LafiteParser.ParameterDeclContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitExpression(LafiteParser.ExpressionContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitLprimaryExpr_primaryExpr(LafiteParser.LprimaryExpr_primaryExprContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitLprimaryExpr_primaryExpr_operand_(LafiteParser.LprimaryExpr_primaryExpr_operand_Context ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitLinvokeParam_IDENTIFIER_(LafiteParser.LinvokeParam_IDENTIFIER_Context ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitLinvokeParam_index_(LafiteParser.LinvokeParam_index_Context ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitLinvokeParam_arguments_(LafiteParser.LinvokeParam_arguments_Context ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitUnaryExpr(LafiteParser.UnaryExprContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitLoperand_literal_(LafiteParser.Loperand_literal_Context ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitLoperand_operandName_(LafiteParser.Loperand_operandName_Context ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitLoperand_methodExpr_(LafiteParser.Loperand_methodExpr_Context ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitLoperand_expression_(LafiteParser.Loperand_expression_Context ctx) {
-        return null;
     }
 
     @Override
     public Object visitLiteral(LafiteParser.LiteralContext ctx) {
+        return super.visitLiteral(ctx);
+    }
+
+    //TODO:处理负数之类
+    @Override
+    public SyntaxNode visitUnaryExpr_(LafiteParser.UnaryExpr_Context ctx) {
         return null;
     }
 
+    //处理除乘馍
     @Override
-    public Object visitBasicLit(LafiteParser.BasicLitContext ctx) {
-        return null;
+    public SyntaxNode visitMuldivmodExpr_(LafiteParser.MuldivmodExpr_Context ctx) {
+        SyntaxNode node = null;
+        Operator op = null;
+        if (null != ctx.MOD()) {
+
+        } else if (null != ctx.DIV()) {
+            op = Operator.DIV;
+        } else {
+            op = Operator.MUL;
+        }
+
+        node = ExprStmtWithTwo.builder()
+                .left((SyntaxNode) visit(ctx.expression(0)))
+                .op(op)
+                .right((SyntaxNode) visit(ctx.expression(1)))
+                .build();
+
+        return node;
+    }
+
+    //处理加减
+    @Override
+    public Object visitAddsubExpr_(LafiteParser.AddsubExpr_Context ctx) {
+        SyntaxNode node = null;
+        Operator op = null;
+        if (null != ctx.PLUS()) {
+            op = Operator.ADD;
+        } else if (null != ctx.MINUS()) {
+            op = Operator.MUL;
+        } else {
+            throw new RuntimeException("unknow op");
+        }
+
+        node = ExprStmtWithTwo.builder()
+                .left((SyntaxNode) visit(ctx.expression(0)))
+                .op(op)
+                .right((SyntaxNode) visit(ctx.expression(1)))
+                .build();
+
+        return node;
     }
 
     @Override
-    public Object visitLoperandName_IDENTIFIER(LafiteParser.LoperandName_IDENTIFIERContext ctx) {
-        return null;
+    public Object visitAndExpr_(LafiteParser.AndExpr_Context ctx) {
+        SyntaxNode node = ExprStmtWithTwo.builder()
+                .left((SyntaxNode) visit(ctx.expression(0)))
+                .op(Operator.AND)
+                .right((SyntaxNode) visit(ctx.expression(1)))
+                .build();
+
+        return node;
     }
 
     @Override
-    public Object visitLqualifiedIdent_(LafiteParser.LqualifiedIdent_Context ctx) {
-        return null;
-    }
+    public Object visitOrExpr_(LafiteParser.OrExpr_Context ctx) {
+        SyntaxNode node = ExprStmtWithTwo.builder()
+                .left((SyntaxNode) visit(ctx.expression(0)))
+                .op(Operator.OR)
+                .right((SyntaxNode) visit(ctx.expression(1)))
+                .build();
 
-    @Override
-    public Object visitLcallFunc(LafiteParser.LcallFuncContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitCompositeLit(LafiteParser.CompositeLitContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitLiteralValue(LafiteParser.LiteralValueContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitElementList(LafiteParser.ElementListContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitKeyedElement(LafiteParser.KeyedElementContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitKey(LafiteParser.KeyContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitElement(LafiteParser.ElementContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitFieldDecl(LafiteParser.FieldDeclContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitString_(LafiteParser.String_Context ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitFunctionLit(LafiteParser.FunctionLitContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitIndex(LafiteParser.IndexContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitArguments(LafiteParser.ArgumentsContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitMethodExpr(LafiteParser.MethodExprContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Object visitEos(LafiteParser.EosContext ctx) {
-        return null;
+        return node;
     }
 
 
+    //解析表达式 end:
+
+
+    //TODO:解析方法定义
     @Override
-    public Object visitChildren(RuleNode ruleNode) {
-        return null;
+    public FunctionStmt visitFunctionDecl(LafiteParser.FunctionDeclContext ctx) {
+
+        FunctionStmt functionStmt = null;
+        dealingFunctionCount++;
+        //方法参数
+
+        //方法体
+
+
+
+        FunctionStmt.builder().nameSpace(currentNamespace.getNameSpaceName()).functionName(ctx.IDENTIFIER().getText()).build();
+        dealingFunctionCount--;
+        return functionStmt;
     }
 
-    @Override
-    public Object visitTerminal(TerminalNode terminalNode) {
-        return null;
+
+    public void compile(Compiler compiler) {
+        currentSource.compile(compiler);
     }
 
-    @Override
-    public Object visitErrorNode(ErrorNode errorNode) {
-        return null;
+    public void dumpSourceCode() {
+        currentSource.dumpSourceCode();
     }
 }

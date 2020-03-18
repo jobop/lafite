@@ -9,7 +9,7 @@ options {
 }
 
 sourceFile
-    : (namespaceClause eos)* (importDecl eos)* ((functionDecl | declaration) eos)*
+    : namespaceClause eos (importDecl eos)* ((functionDecl | shortVarDecl) eos)*
     ;
 
 namespaceClause
@@ -29,8 +29,7 @@ importPath
     ;
 
 declaration
-    : constDecl
-    | varDecl
+    : varDecl
     ;
 
 constDecl
@@ -55,7 +54,7 @@ expressionList
 // Function declarations
 
 functionDecl
-    : 'func' IDENTIFIER (signature block?) #func_
+    : 'func' IDENTIFIER (signature block?)
     ;
 
 
@@ -198,9 +197,17 @@ parameterDecl
     ;
 
 expression
-    : primaryExpr
-    | unaryExpr
-    | expression ('*' | '/' | '%' ) expression
+    : primaryExpr                                   #primaryExpr_
+    | unaryExpr                                     #unaryExpr_
+    | expression ('*' | '/' | '%' ) expression      #muldivmodExpr_
+    | expression ('+' | '-' ) expression            #addsubExpr_
+    | expression ('==' | '!=' | '<' | '<=' | '>' | '>=') expression #compareExpr_
+    | expression '&&' expression                     #andExpr_
+    | expression '||' expression                    #orExpr_
+    ;
+
+twoExpr
+    :expression ('*' | '/' | '%' ) expression
     | expression ('+' | '-' ) expression
     | expression ('==' | '!=' | '<' | '<=' | '>' | '>=') expression
     | expression '&&' expression
@@ -208,14 +215,14 @@ expression
     ;
 
 primaryExpr
-    : operand                      #LprimaryExpr_primaryExpr_operand_
-    | primaryExpr (invokeParam) #LprimaryExpr_primaryExpr
+    : operand
+    | primaryExpr (invokeParam)
     ;
 
 invokeParam
-    :DOT IDENTIFIER #LinvokeParam_IDENTIFIER_
-    | index       #LinvokeParam_index_
-    | arguments   #LinvokeParam_arguments_
+    :DOT IDENTIFIER
+    | index
+    | arguments
     ;
 
 unaryExpr
@@ -225,10 +232,10 @@ unaryExpr
 
 
 operand
-    : literal          #Loperand_literal_
-    | operandName      #Loperand_operandName_
-    | methodExpr       #Loperand_methodExpr_
-    | '(' expression ')' #Loperand_expression_
+    : literal
+    | operandName
+    | methodExpr
+    | '(' expression ')'
     ;
 
 literal
@@ -246,8 +253,8 @@ basicLit
 
 
 operandName
-    : IDENTIFIER    #LoperandName_IDENTIFIER
-    | qualifiedIdent #LqualifiedIdent_
+    : IDENTIFIER
+    | qualifiedIdent
     ;
 
 qualifiedIdent

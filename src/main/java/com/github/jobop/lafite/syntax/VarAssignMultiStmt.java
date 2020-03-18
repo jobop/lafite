@@ -34,7 +34,7 @@ public class VarAssignMultiStmt extends SyntaxNode {
     public void dumpSourceCode() {
         //const aaa=1
         for (String dataName : dataNames) {
-            System.out.print(dataName + " ");
+            System.out.print(dataName + ",");
         }
         System.out.print(" =");
 

@@ -24,6 +24,7 @@ public class GlobalVarDeclMultiStmt extends SyntaxNode {
     @Override
     public void compile(Compiler compiler) {
         data.compile(compiler);
+
         for (String dataName : dataNames) {
             compiler.insertOpCode(Opcode.HEAPDECL, getLineNum(), dataName);
         }
@@ -34,11 +35,12 @@ public class GlobalVarDeclMultiStmt extends SyntaxNode {
     public void dumpSourceCode() {
         //const aaa=1
         for (String dataName : dataNames) {
-            System.out.print(dataName + " ");
+            System.out.print(dataName + ",");
         }
         System.out.print(" :=");
-
         data.dumpSourceCode();
+
+
         System.out.println();
     }
 

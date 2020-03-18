@@ -17,25 +17,18 @@ import java.util.Map;
 @Data
 public class SourceStmt extends SyntaxNode {
     private int lineNum;
-    @Singular
-    List<Namespace> namespaces = new ArrayList<>();
-
+    Namespace namespace;
 
 
     @Override
     public void compile(Compiler compiler) {
-        for (Namespace ns : namespaces) {
-            ns.compile(compiler);
-        }
+        namespace.compile(compiler);
     }
 
     @Override
     public void dumpSourceCode() {
 
-        for (Namespace ns : namespaces) {
-            System.out.println();
-            ns.dumpSourceCode();
-        }
+        namespace.dumpSourceCode();
 
     }
 }

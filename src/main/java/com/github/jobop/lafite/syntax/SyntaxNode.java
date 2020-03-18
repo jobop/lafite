@@ -2,11 +2,7 @@ package com.github.jobop.lafite.syntax;
 
 
 import com.github.jobop.lafite.compiler.Compiler;
-import com.sun.tools.javac.resources.compiler;
-import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.List;
 

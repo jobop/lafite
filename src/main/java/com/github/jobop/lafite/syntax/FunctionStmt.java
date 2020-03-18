@@ -7,9 +7,7 @@ import lombok.Data;
 import lombok.Singular;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Enzo Cotter on 2020/3/14.

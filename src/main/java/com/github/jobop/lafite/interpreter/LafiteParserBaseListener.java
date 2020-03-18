@@ -138,13 +138,13 @@ public class LafiteParserBaseListener implements LafiteParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterFunc_(LafiteParser.Func_Context ctx) { }
+	@Override public void enterFunctionDecl(LafiteParser.FunctionDeclContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitFunc_(LafiteParser.Func_Context ctx) { }
+	@Override public void exitFunctionDecl(LafiteParser.FunctionDeclContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -486,73 +486,121 @@ public class LafiteParserBaseListener implements LafiteParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpression(LafiteParser.ExpressionContext ctx) { }
+	@Override public void enterPrimaryExpr_(LafiteParser.PrimaryExpr_Context ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpression(LafiteParser.ExpressionContext ctx) { }
+	@Override public void exitPrimaryExpr_(LafiteParser.PrimaryExpr_Context ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLprimaryExpr_primaryExpr(LafiteParser.LprimaryExpr_primaryExprContext ctx) { }
+	@Override public void enterUnaryExpr_(LafiteParser.UnaryExpr_Context ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLprimaryExpr_primaryExpr(LafiteParser.LprimaryExpr_primaryExprContext ctx) { }
+	@Override public void exitUnaryExpr_(LafiteParser.UnaryExpr_Context ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLprimaryExpr_primaryExpr_operand_(LafiteParser.LprimaryExpr_primaryExpr_operand_Context ctx) { }
+	@Override public void enterOrExpr_(LafiteParser.OrExpr_Context ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLprimaryExpr_primaryExpr_operand_(LafiteParser.LprimaryExpr_primaryExpr_operand_Context ctx) { }
+	@Override public void exitOrExpr_(LafiteParser.OrExpr_Context ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLinvokeParam_IDENTIFIER_(LafiteParser.LinvokeParam_IDENTIFIER_Context ctx) { }
+	@Override public void enterAddsubExpr_(LafiteParser.AddsubExpr_Context ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLinvokeParam_IDENTIFIER_(LafiteParser.LinvokeParam_IDENTIFIER_Context ctx) { }
+	@Override public void exitAddsubExpr_(LafiteParser.AddsubExpr_Context ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLinvokeParam_index_(LafiteParser.LinvokeParam_index_Context ctx) { }
+	@Override public void enterMuldivmodExpr_(LafiteParser.MuldivmodExpr_Context ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLinvokeParam_index_(LafiteParser.LinvokeParam_index_Context ctx) { }
+	@Override public void exitMuldivmodExpr_(LafiteParser.MuldivmodExpr_Context ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLinvokeParam_arguments_(LafiteParser.LinvokeParam_arguments_Context ctx) { }
+	@Override public void enterAndExpr_(LafiteParser.AndExpr_Context ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLinvokeParam_arguments_(LafiteParser.LinvokeParam_arguments_Context ctx) { }
+	@Override public void exitAndExpr_(LafiteParser.AndExpr_Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterCompareExpr_(LafiteParser.CompareExpr_Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCompareExpr_(LafiteParser.CompareExpr_Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterTwoExpr(LafiteParser.TwoExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitTwoExpr(LafiteParser.TwoExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterPrimaryExpr(LafiteParser.PrimaryExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPrimaryExpr(LafiteParser.PrimaryExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterInvokeParam(LafiteParser.InvokeParamContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitInvokeParam(LafiteParser.InvokeParamContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -570,49 +618,13 @@ public class LafiteParserBaseListener implements LafiteParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLoperand_literal_(LafiteParser.Loperand_literal_Context ctx) { }
+	@Override public void enterOperand(LafiteParser.OperandContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLoperand_literal_(LafiteParser.Loperand_literal_Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterLoperand_operandName_(LafiteParser.Loperand_operandName_Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitLoperand_operandName_(LafiteParser.Loperand_operandName_Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterLoperand_methodExpr_(LafiteParser.Loperand_methodExpr_Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitLoperand_methodExpr_(LafiteParser.Loperand_methodExpr_Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterLoperand_expression_(LafiteParser.Loperand_expression_Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitLoperand_expression_(LafiteParser.Loperand_expression_Context ctx) { }
+	@Override public void exitOperand(LafiteParser.OperandContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -642,25 +654,13 @@ public class LafiteParserBaseListener implements LafiteParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLoperandName_IDENTIFIER(LafiteParser.LoperandName_IDENTIFIERContext ctx) { }
+	@Override public void enterOperandName(LafiteParser.OperandNameContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLoperandName_IDENTIFIER(LafiteParser.LoperandName_IDENTIFIERContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterLqualifiedIdent_(LafiteParser.LqualifiedIdent_Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitLqualifiedIdent_(LafiteParser.LqualifiedIdent_Context ctx) { }
+	@Override public void exitOperandName(LafiteParser.OperandNameContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

@@ -1,10 +1,10 @@
-namespace main
-func main(aaa,bbb,ccc)(ddd,eee,fff){
+namespace main_main_cc
 
-}
+vaaa:=asdf/eee
+vccc,vddd:=aaa,vvv
 
+f1,f2,f3:=1,2.0,"3"
 
+/**func aaa(){
 
-func fuck(aaa,bbb,ccc)(ddd,eee,fff){
-
-}
+}**/

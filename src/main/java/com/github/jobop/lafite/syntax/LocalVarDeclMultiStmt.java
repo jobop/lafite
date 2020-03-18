@@ -18,12 +18,16 @@ public class LocalVarDeclMultiStmt extends SyntaxNode {
     private int lineNum;
     @Singular
     List<String> dataNames = new ArrayList<>();
-    SyntaxNode data;
+    @Singular
+    List<SyntaxNode> datas=new ArrayList<>();
 
 
     @Override
     public void compile(Compiler compiler) {
-        data.compile(compiler);
+        for(SyntaxNode data:datas){
+            data.compile(compiler);
+        }
+
         for (String dataName : dataNames) {
             compiler.insertOpCode(Opcode.STACKDECL, getLineNum(), dataName);
         }
@@ -34,11 +38,13 @@ public class LocalVarDeclMultiStmt extends SyntaxNode {
     public void dumpSourceCode() {
         //const aaa=1
         for (String dataName : dataNames) {
-            System.out.print(dataName + " ");
+            System.out.print(dataName + ",");
         }
         System.out.print(" :=");
 
-        data.dumpSourceCode();
+        for(SyntaxNode data:datas){
+            data.dumpSourceCode();
+        }
         System.out.println();
     }
 
