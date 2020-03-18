@@ -2,6 +2,9 @@ package com.github.jobop.lafite.syntax;
 
 import com.github.jobop.lafite.compiler.Compiler;
 import com.github.jobop.lafite.runtime.opcode.Opcode;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Singular;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,16 +12,16 @@ import java.util.List;
 /**
  * Created by Enzo Cotter on 2020/3/17.
  */
+@Builder
+@Data
 public class CallStmt extends SyntaxNode {
+    private int lineNum;
     private String nameSpace;
     private String functionName;
 
-
+    @Singular
     List<SyntaxNode> params = new ArrayList<>();
 
-    public CallStmt(int lineNum) {
-        super(lineNum);
-    }
 
     @Override
     public void compile(Compiler compiler) {
@@ -42,27 +45,4 @@ public class CallStmt extends SyntaxNode {
         System.out.println(")");
     }
 
-    public String getNameSpace() {
-        return nameSpace;
-    }
-
-    public void setNameSpace(String nameSpace) {
-        this.nameSpace = nameSpace;
-    }
-
-    public String getFunctionName() {
-        return functionName;
-    }
-
-    public void setFunctionName(String functionName) {
-        this.functionName = functionName;
-    }
-
-    public List<SyntaxNode> getParams() {
-        return params;
-    }
-
-    public void setParams(List<SyntaxNode> params) {
-        this.params = params;
-    }
 }

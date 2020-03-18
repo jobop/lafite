@@ -29,16 +29,16 @@ public class ProcessEngine implements IProcessEngine {
         String functionInfoMapStr = byteCodeSplitor.getFunctionInfoMapStr();
 
 
-        Map<String, JSONObject> functionMap = JSON.parseObject(functionInfoMapStr, HashMap.class);
-        functionMap.forEach((key, value) -> {
-            metaSpace.getMethodDescs().put(key, value.toJavaObject(FunctionInfo.class));
-        });
-
+        if (null != functionInfoMapStr && !functionInfoMapStr.equals("")) {
+            Map<String, JSONObject> functionMap = JSON.parseObject(functionInfoMapStr, HashMap.class);
+            functionMap.forEach((key, value) -> {
+                metaSpace.getMethodDescs().put(key, value.toJavaObject(FunctionInfo.class));
+            });
+        }
 
         //寻找main入口
         FunctionInfo mainFunction = metaSpace.getMethodDescs().get("main.main");
 
-        Hashtable<String, Object> constTable = new Hashtable<String, Object>();
 
         VmStack vmStack = new VmStack();
         PcPointer pc = new PcPointer();
@@ -128,7 +128,12 @@ public class ProcessEngine implements IProcessEngine {
                 pc.add();
                 continue;
             }
-            if (opcode == Opcode.STACKSTORE) {
+            if (opcode == Opcode.STACKDECL) {
+                //如果原来就已经定义过，要抛出运行时异常
+                if(null!=vmStack.peek().getLocalVarTable().get(addrs.get(0))){
+                    throw new RuntimeException(addrs.get(0) +" dumplicate define!");
+                }
+
 
                 //把操作数栈的顶元素出栈，存入局部变量表的变量
                 Object o = vmStack.peek().pop();
@@ -137,22 +142,45 @@ public class ProcessEngine implements IProcessEngine {
                 pc.add();
                 continue;
             }
-            if (opcode == Opcode.CONSTSTORE) {
+            if (opcode == Opcode.HEAPDECL) {
+
+                if(null!=heapSpace.getGlobalTable().get(addrs.get(0))){
+                    throw new RuntimeException(addrs.get(0) +" dumplicate define!");
+                }
 
                 //把操作数栈的顶元素出栈，存入全局变量表的变量
                 Object o = vmStack.peek().pop();
-                constTable.put(addrs.get(0), o);
+                heapSpace.getGlobalTable().put(addrs.get(0), o);
                 //程序计数器+1
                 pc.add();
                 continue;
             }
+            if (opcode == Opcode.VARASSIGN) {
+
+                //把操作数栈的顶元素出栈，看是全局变量还是局部变量
+                Object o = vmStack.peek().pop();
+                //如果定义了局部变量则先存入栈内，否则存入堆内
+
+                if (null != vmStack.peek().getLocalVarTable().get(addrs.get(0))) {
+                    vmStack.peek().getLocalVarTable().put(addrs.get(0), o);
+                } else if (null != heapSpace.getGlobalTable().get(addrs.get(0))) {
+                    heapSpace.getGlobalTable().put(addrs.get(0), o);
+                } else {
+                    throw new RuntimeException("no var [" + addrs.get(0) + "] define!");
+                }
+
+                //程序计数器+1
+                pc.add();
+                continue;
+            }
+
+
             if (opcode == Opcode.LOAD) {
-                //FIXME:
                 //这里优先找局部变量，再找全局变量？？
                 //从局部变量表取元素，然后压栈
-                Object o = constTable.get(addrs.get(0));
+                Object o = o = vmStack.peek().getLocalVarTable().get(addrs.get(0));
                 if (null == o) {
-                    o = vmStack.peek().getLocalVarTable().get(addrs.get(0));
+                    o = heapSpace.getGlobalTable().get(addrs.get(0));
                 }
                 vmStack.peek().push(o);
                 //程序计数器+1

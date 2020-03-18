@@ -3,18 +3,21 @@ package com.github.jobop.lafite.syntax;
 import com.github.jobop.lafite.compiler.Compiler;
 import com.github.jobop.lafite.runtime.opcode.Opcode;
 import com.github.jobop.lafite.syntax.expr.ExprStmt;
+import lombok.Builder;
+import lombok.Data;
 
 /**
  * Created by Enzo Cotter on 2020/3/15.
  */
+@Builder
+@Data
 public class WhileStmt extends SyntaxNode {
+    private int lineNum;
+
     ExprStmt condition = null;
 
     BlockStmt block = null;
 
-    public WhileStmt(int lineNum) {
-        super(lineNum);
-    }
 
     @Override
     public void compile(Compiler compiler) {
@@ -27,7 +30,7 @@ public class WhileStmt extends SyntaxNode {
         int blockStartJumpPoint = whileStartJumpPoint + condition.getLocalByteCodeSeq().size() + 1;
 
         //+1为了增加跳转指令本身
-        int endWhileJumpPoint = blockStartJumpPoint + block.getLocalByteCodeSeq().size()+1;
+        int endWhileJumpPoint = blockStartJumpPoint + block.getLocalByteCodeSeq().size() + 1;
 
 
         condition.compile(compiler);
@@ -48,19 +51,4 @@ public class WhileStmt extends SyntaxNode {
         block.dumpSourceCode();
     }
 
-    public ExprStmt getCondition() {
-        return condition;
-    }
-
-    public void setCondition(ExprStmt condition) {
-        this.condition = condition;
-    }
-
-    public BlockStmt getBlock() {
-        return block;
-    }
-
-    public void setBlock(BlockStmt block) {
-        this.block = block;
-    }
 }

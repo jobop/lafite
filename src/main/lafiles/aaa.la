@@ -1,36 +1,10 @@
-{namespaceStmt}:
-namespace {nameSpaceName};
+namespace main
+func main(aaa,bbb,ccc)(ddd,eee,fff){
 
-List{constStmt}:
-   const {constName}:={constValue}
-
-List{functionStmt}:
-func {funcName}({params...}) returns({ret...}){
-
-List{varStmt}:
-   var {varName}:={varValue}
-   var {varName}:={varValue}
-   var {varName}:={varValue}
-   ...
+}
 
 
-List{constStmt}:
-   const {constName}:={constValue}
-   const {constName}:={constValue}
-   const {constName}:={constValue}
-   const {constName}:={constValue}
-   ...
 
-List{ifStmt}:
-    if {ifStmt}{
-
-    }
-    ...
-
-
-List{forStmt}:
-    for(){
-    }
-    ...
+func fuck(aaa,bbb,ccc)(ddd,eee,fff){
 
 }

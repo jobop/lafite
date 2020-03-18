@@ -1,6 +1,9 @@
 package com.github.jobop.lafite.syntax;
 
 import com.github.jobop.lafite.compiler.Compiler;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Singular;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,24 +13,18 @@ import java.util.Map;
 /**
  * Created by Enzo Cotter on 2020/3/14.
  */
+@Builder
+@Data
 public class SourceStmt extends SyntaxNode {
-    List<Namespace> namespaceList = new ArrayList<>();
+    private int lineNum;
+    @Singular
+    List<Namespace> namespaces = new ArrayList<>();
 
-    public SourceStmt(int lineNum) {
-        super(lineNum);
-    }
 
-    public List<Namespace> getNamespaceList() {
-        return namespaceList;
-    }
-
-    public void setNamespaceList(List<Namespace> namespaceList) {
-        this.namespaceList = namespaceList;
-    }
 
     @Override
     public void compile(Compiler compiler) {
-        for (Namespace ns : namespaceList) {
+        for (Namespace ns : namespaces) {
             ns.compile(compiler);
         }
     }
@@ -35,7 +32,7 @@ public class SourceStmt extends SyntaxNode {
     @Override
     public void dumpSourceCode() {
 
-        for (Namespace ns : namespaceList) {
+        for (Namespace ns : namespaces) {
             System.out.println();
             ns.dumpSourceCode();
         }

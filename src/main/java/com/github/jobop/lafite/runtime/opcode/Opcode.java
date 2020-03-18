@@ -27,8 +27,6 @@ public enum Opcode {
 //    ASSIGN                2   为元素赋值，加到局部变量表
 //    LOAD                  1   从局部变量表load一个数据到变量
     //int
-    ILDV(OpNumSet.ONE),
-    ILDC(OpNumSet.ONE),
 
     //string
     SLDV(OpNumSet.ONE),
@@ -72,8 +70,9 @@ public enum Opcode {
 //    BLOAD(OpNumSet.ONE),
     LOAD(OpNumSet.ONE),
 
-    CONSTSTORE(OpNumSet.ONE),
-    STACKSTORE(OpNumSet.ONE),
+    HEAPDECL(OpNumSet.ONE),
+    STACKDECL(OpNumSet.ONE),
+    VARASSIGN(OpNumSet.ONE),
 
 
     DUP(OpNumSet.ZERO),

@@ -114,6 +114,11 @@ public class LafiteInterpreter extends LafiteParserBaseListener {
 
 
     @Override
+    public void enterFunc_(LafiteParser.Func_Context ctx) {
+        super.enterFunc_(ctx);
+    }
+
+    @Override
     public void exitFunc_(LafiteParser.Func_Context ctx) {
     }
 
@@ -142,7 +147,7 @@ public class LafiteInterpreter extends LafiteParserBaseListener {
         return compiler.dumpToHex();
     }
 
-    public void toFile(File file) {
+    public void writeToFile(File file) {
         compiler.genFile(file);
     }
 }

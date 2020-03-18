@@ -3,44 +3,21 @@ package com.github.jobop.lafite.syntax;
 import com.github.jobop.lafite.compiler.Compiler;
 import com.github.jobop.lafite.runtime.opcode.Opcode;
 import com.github.jobop.lafite.syntax.expr.ExprStmt;
+import lombok.Builder;
+import lombok.Data;
 
 /**
  * Created by Enzo Cotter on 2020/3/15.
  */
+@Builder
+@Data
 public class IfStmt extends SyntaxNode {
+    private int lineNum;
     ExprStmt condition = null;
 
     BlockStmt block = null;
 
     BlockStmt elseBlock = null;
-
-    public IfStmt(int lineNum) {
-        super(lineNum);
-    }
-
-    public ExprStmt getCondition() {
-        return condition;
-    }
-
-    public void setCondition(ExprStmt condition) {
-        this.condition = condition;
-    }
-
-    public BlockStmt getBlock() {
-        return block;
-    }
-
-    public void setBlock(BlockStmt block) {
-        this.block = block;
-    }
-
-    public BlockStmt getElseBlock() {
-        return elseBlock;
-    }
-
-    public void setElseBlock(BlockStmt elseBlock) {
-        this.elseBlock = elseBlock;
-    }
 
     @Override
     public void compile(Compiler compiler) {

@@ -2,6 +2,7 @@ package com.github.jobop.lafite;
 
 import com.github.jobop.lafite.interpreter.LafiteInterpreter;
 import com.github.jobop.lafite.interpreter.LafiteLexer;
+import com.github.jobop.lafite.interpreter.LafiteParseVisitorImpl;
 import com.github.jobop.lafite.interpreter.LafiteParser;
 import com.github.jobop.lafite.launcher.loader.FileLoader;
 import com.github.jobop.lafite.runtime.utils.StringUtils;
@@ -30,8 +31,10 @@ public class Main {
 
 
         LafiteInterpreter interpreter = new LafiteInterpreter();
-        parser.addParseListener(interpreter);
-        parser.sourceFile();
+//        parser.addParseListener(interpreter);
+        LafiteParseVisitorImpl visitor=new LafiteParseVisitorImpl();
+
+        visitor.visit(parser.sourceFile());
         // print LISP-style tree
 
         System.out.println("编译结束，字节码为:");
@@ -40,7 +43,7 @@ public class Main {
         System.out.println(interpreter.dump());
 
         File outputFile = new File("/Users/zhengwei/Desktop/test.l");
-        interpreter.toFile(outputFile);
+        interpreter.writeToFile(outputFile);
         System.out.println("编译文件输出到" + outputFile.getAbsolutePath());
 
         System.out.println("开始从" + outputFile.getAbsolutePath() + "载入文件");

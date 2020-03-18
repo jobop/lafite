@@ -3,18 +3,19 @@ package com.github.jobop.lafite.syntax;
 import com.github.jobop.lafite.compiler.Compiler;
 import com.github.jobop.lafite.runtime.opcode.Opcode;
 import com.github.jobop.lafite.syntax.expr.ExprStmt;
+import lombok.Builder;
+import lombok.Data;
 
 /**
  * Created by Enzo Cotter on 2020/3/17.
  */
 public class BuildInFunction {
-
+    @Builder
+    @Data
     public static class OutStmt extends SyntaxNode {
+        private int lineNum;
         ExprStmt expr;
 
-        public OutStmt(int lineNum) {
-            super(lineNum);
-        }
 
         @Override
         public void compile(Compiler compiler) {
@@ -29,13 +30,6 @@ public class BuildInFunction {
             System.out.println();
         }
 
-        public ExprStmt getExpr() {
-            return expr;
-        }
-
-        public void setExpr(ExprStmt expr) {
-            this.expr = expr;
-        }
     }
 
 

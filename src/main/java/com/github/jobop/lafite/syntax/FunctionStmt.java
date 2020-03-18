@@ -2,6 +2,9 @@ package com.github.jobop.lafite.syntax;
 
 import com.github.jobop.lafite.compiler.Compiler;
 import com.github.jobop.lafite.runtime.opcode.Opcode;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Singular;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,43 +14,16 @@ import java.util.Map;
 /**
  * Created by Enzo Cotter on 2020/3/14.
  */
+@Builder
+@Data
 public class FunctionStmt extends SyntaxNode {
+    private int lineNum;
     String nameSpace = "";
     String functionName = "";
+    @Singular
     List<SyntaxNode> params = new ArrayList<>();
 
     BlockStmt block = null;
-
-
-    public FunctionStmt(String nameSpace, String functionName, int lineNum) {
-        super(lineNum);
-        this.nameSpace = nameSpace;
-        this.functionName = functionName;
-    }
-
-    public String getNameSpace() {
-        return nameSpace;
-    }
-
-    public void setNameSpace(String nameSpace) {
-        this.nameSpace = nameSpace;
-    }
-
-    public BlockStmt getBlock() {
-        return block;
-    }
-
-    public void setBlock(BlockStmt block) {
-        this.block = block;
-    }
-
-    public String getFunctionName() {
-        return functionName;
-    }
-
-    public void setFunctionName(String functionName) {
-        this.functionName = functionName;
-    }
 
 
     @Override
@@ -68,7 +44,7 @@ public class FunctionStmt extends SyntaxNode {
             }
         }
         if (!hasRet) {
-            block.getNodes().add(new RetStmt(getLineNum()));
+            block = block.toBuilder().node(RetStmt.builder().lineNum(getLineNum()).build()).build();
         }
         block.compile(compiler);
     }
@@ -85,11 +61,4 @@ public class FunctionStmt extends SyntaxNode {
         block.dumpSourceCode();
     }
 
-    public List<SyntaxNode> getParams() {
-        return params;
-    }
-
-    public void setParams(List<SyntaxNode> params) {
-        this.params = params;
-    }
 }
