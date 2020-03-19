@@ -68,18 +68,29 @@ public interface LafiteParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitIdentifierList(LafiteParser.IdentifierListContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link LafiteParser#param_identifierList}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParam_identifierList(LafiteParser.Param_identifierListContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link LafiteParser#call_param_identifierList}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCall_param_identifierList(LafiteParser.Call_param_identifierListContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link LafiteParser#expressionList}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitExpressionList(LafiteParser.ExpressionListContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code func_}
-	 * labeled alternative in {@link LafiteParser#functionDecl}.
+	 * Visit a parse tree produced by {@link LafiteParser#functionDecl}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitFunc_(LafiteParser.Func_Context ctx);
+	T visitFunctionDecl(LafiteParser.FunctionDeclContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code varDecl_}
 	 * labeled alternative in {@link LafiteParser#varDecl}.
@@ -160,6 +171,18 @@ public interface LafiteParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitReturnStmt(LafiteParser.ReturnStmtContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link LafiteParser#outStmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOutStmt(LafiteParser.OutStmtContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link LafiteParser#mixList}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMixList(LafiteParser.MixListContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link LafiteParser#breakStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -177,6 +200,12 @@ public interface LafiteParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitIfStmt(LafiteParser.IfStmtContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link LafiteParser#whileStmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitWhileStmt(LafiteParser.WhileStmtContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link LafiteParser#recvStmt}.
 	 * @param ctx the parse tree
@@ -232,64 +261,98 @@ public interface LafiteParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitSignature(LafiteParser.SignatureContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link LafiteParser#result}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitResult(LafiteParser.ResultContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link LafiteParser#parameters}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitParameters(LafiteParser.ParametersContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link LafiteParser#parameterDecl}.
+	 * Visit a parse tree produced by {@link LafiteParser#call_parameters}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitParameterDecl(LafiteParser.ParameterDeclContext ctx);
+	T visitCall_parameters(LafiteParser.Call_parametersContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link LafiteParser#expression}.
+	 * Visit a parse tree produced by the {@code primaryExpr_}
+	 * labeled alternative in {@link LafiteParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExpression(LafiteParser.ExpressionContext ctx);
+	T visitPrimaryExpr_(LafiteParser.PrimaryExpr_Context ctx);
 	/**
-	 * Visit a parse tree produced by the {@code LprimaryExpr_primaryExpr}
-	 * labeled alternative in {@link LafiteParser#primaryExpr}.
+	 * Visit a parse tree produced by the {@code unaryExpr_}
+	 * labeled alternative in {@link LafiteParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLprimaryExpr_primaryExpr(LafiteParser.LprimaryExpr_primaryExprContext ctx);
+	T visitUnaryExpr_(LafiteParser.UnaryExpr_Context ctx);
 	/**
-	 * Visit a parse tree produced by the {@code LprimaryExpr_primaryExpr_operand_}
-	 * labeled alternative in {@link LafiteParser#primaryExpr}.
+	 * Visit a parse tree produced by the {@code callParent_}
+	 * labeled alternative in {@link LafiteParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLprimaryExpr_primaryExpr_operand_(LafiteParser.LprimaryExpr_primaryExpr_operand_Context ctx);
+	T visitCallParent_(LafiteParser.CallParent_Context ctx);
 	/**
-	 * Visit a parse tree produced by the {@code LinvokeParam_IDENTIFIER_}
-	 * labeled alternative in {@link LafiteParser#invokeParam}.
+	 * Visit a parse tree produced by the {@code orExpr_}
+	 * labeled alternative in {@link LafiteParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLinvokeParam_IDENTIFIER_(LafiteParser.LinvokeParam_IDENTIFIER_Context ctx);
+	T visitOrExpr_(LafiteParser.OrExpr_Context ctx);
 	/**
-	 * Visit a parse tree produced by the {@code LinvokeParam_index_}
-	 * labeled alternative in {@link LafiteParser#invokeParam}.
+	 * Visit a parse tree produced by the {@code addsubExpr_}
+	 * labeled alternative in {@link LafiteParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLinvokeParam_index_(LafiteParser.LinvokeParam_index_Context ctx);
+	T visitAddsubExpr_(LafiteParser.AddsubExpr_Context ctx);
 	/**
-	 * Visit a parse tree produced by the {@code LinvokeParam_arguments_}
-	 * labeled alternative in {@link LafiteParser#invokeParam}.
+	 * Visit a parse tree produced by the {@code muldivmodExpr_}
+	 * labeled alternative in {@link LafiteParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLinvokeParam_arguments_(LafiteParser.LinvokeParam_arguments_Context ctx);
+	T visitMuldivmodExpr_(LafiteParser.MuldivmodExpr_Context ctx);
+	/**
+	 * Visit a parse tree produced by the {@code andExpr_}
+	 * labeled alternative in {@link LafiteParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAndExpr_(LafiteParser.AndExpr_Context ctx);
+	/**
+	 * Visit a parse tree produced by the {@code compareExpr_}
+	 * labeled alternative in {@link LafiteParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCompareExpr_(LafiteParser.CompareExpr_Context ctx);
+	/**
+	 * Visit a parse tree produced by {@link LafiteParser#twoExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTwoExpr(LafiteParser.TwoExprContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link LafiteParser#primaryExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPrimaryExpr(LafiteParser.PrimaryExprContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code call_}
+	 * labeled alternative in {@link LafiteParser#callStmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCall_(LafiteParser.Call_Context ctx);
+	/**
+	 * Visit a parse tree produced by {@link LafiteParser#invokeParam}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInvokeParam(LafiteParser.InvokeParamContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link LafiteParser#unaryExpr}.
 	 * @param ctx the parse tree
@@ -297,33 +360,11 @@ public interface LafiteParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitUnaryExpr(LafiteParser.UnaryExprContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code Loperand_literal_}
-	 * labeled alternative in {@link LafiteParser#operand}.
+	 * Visit a parse tree produced by {@link LafiteParser#operand}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLoperand_literal_(LafiteParser.Loperand_literal_Context ctx);
-	/**
-	 * Visit a parse tree produced by the {@code Loperand_operandName_}
-	 * labeled alternative in {@link LafiteParser#operand}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLoperand_operandName_(LafiteParser.Loperand_operandName_Context ctx);
-	/**
-	 * Visit a parse tree produced by the {@code Loperand_methodExpr_}
-	 * labeled alternative in {@link LafiteParser#operand}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLoperand_methodExpr_(LafiteParser.Loperand_methodExpr_Context ctx);
-	/**
-	 * Visit a parse tree produced by the {@code Loperand_expression_}
-	 * labeled alternative in {@link LafiteParser#operand}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLoperand_expression_(LafiteParser.Loperand_expression_Context ctx);
+	T visitOperand(LafiteParser.OperandContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link LafiteParser#literal}.
 	 * @param ctx the parse tree
@@ -337,26 +378,17 @@ public interface LafiteParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitBasicLit(LafiteParser.BasicLitContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code LoperandName_IDENTIFIER}
-	 * labeled alternative in {@link LafiteParser#operandName}.
+	 * Visit a parse tree produced by {@link LafiteParser#operandName}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLoperandName_IDENTIFIER(LafiteParser.LoperandName_IDENTIFIERContext ctx);
+	T visitOperandName(LafiteParser.OperandNameContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code LqualifiedIdent_}
-	 * labeled alternative in {@link LafiteParser#operandName}.
+	 * Visit a parse tree produced by {@link LafiteParser#qualifiedIdent}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLqualifiedIdent_(LafiteParser.LqualifiedIdent_Context ctx);
-	/**
-	 * Visit a parse tree produced by the {@code LcallFunc}
-	 * labeled alternative in {@link LafiteParser#qualifiedIdent}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLcallFunc(LafiteParser.LcallFuncContext ctx);
+	T visitQualifiedIdent(LafiteParser.QualifiedIdentContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link LafiteParser#compositeLit}.
 	 * @param ctx the parse tree
@@ -424,11 +456,12 @@ public interface LafiteParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitArguments(LafiteParser.ArgumentsContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link LafiteParser#methodExpr}.
+	 * Visit a parse tree produced by the {@code methodExpr_}
+	 * labeled alternative in {@link LafiteParser#methodExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitMethodExpr(LafiteParser.MethodExprContext ctx);
+	T visitMethodExpr_(LafiteParser.MethodExpr_Context ctx);
 	/**
 	 * Visit a parse tree produced by {@link LafiteParser#eos}.
 	 * @param ctx the parse tree

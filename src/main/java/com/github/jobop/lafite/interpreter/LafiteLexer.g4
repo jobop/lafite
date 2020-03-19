@@ -14,17 +14,20 @@ SWITCH                 : 'switch';
 CONST                  : 'const';
 FALLTHROUGH            : 'fallthrough';
 IF                     : 'if';
+WHILE                     : 'while';
 RANGE                  : 'range';
 TYPE                   : 'type';
 CONTINUE               : 'continue';
 FOR                    : 'for';
 IMPORT                 : 'import';
 RETURN                 : 'return';
+OUT                 : 'out';
 VAR                    : 'var';
 
 NIL_LIT                : 'nil';
 
 IDENTIFIER             : LETTER (LETTER | UNICODE_DIGIT)*;
+
 
 // Punctuation
 

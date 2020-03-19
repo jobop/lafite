@@ -1,36 +1,35 @@
-{namespaceStmt}:
-namespace {nameSpaceName};
+namespace main
+//全局变量和多变量定义
+CONST1,CONST2,RN:=111,222.01,"\r\n"
 
-List{constStmt}:
-   const {constName}:={constValue}
+func main(){
+    sayHello("Lafite")
+}
 
-List{functionStmt}:
-func {funcName}({params...}) returns({ret...}){
+func sayHello(name){
+    out "Hello ",name,"!!!",RN
+    //测试方法
+    v1,v2:=test()
+    out v1," ",v2,RN
+}
 
-List{varStmt}:
-   var {varName}:={varValue}
-   var {varName}:={varValue}
-   var {varName}:={varValue}
-   ...
+func test(){
+    out "CONST1=",CONST1," CONST2=",CONST2,RN
+    out "CONST1+CONST2=",CONST1+CONST2,RN
 
-
-List{constStmt}:
-   const {constName}:={constValue}
-   const {constName}:={constValue}
-   const {constName}:={constValue}
-   const {constName}:={constValue}
-   ...
-
-List{ifStmt}:
-    if {ifStmt}{
-
+    //if-else
+    if CONST1>CONST2 {
+        out "CONST1大于CONST2",RN
+    }else{
+        out "CONST1不大于CONST2",RN
     }
-    ...
 
-
-List{forStmt}:
-    for(){
+    //循环
+    var4:=1
+    out "var4原始值:",var4,RN
+    while var4<5{
+        var4=var4+1
     }
-    ...
-
+    out "var4新值:",var4,RN
+    return var4,"fuck"
 }

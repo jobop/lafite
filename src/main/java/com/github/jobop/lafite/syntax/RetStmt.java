@@ -2,6 +2,10 @@ package com.github.jobop.lafite.syntax;
 
 import com.github.jobop.lafite.compiler.Compiler;
 import com.github.jobop.lafite.runtime.opcode.Opcode;
+import com.github.jobop.lafite.syntax.expr.ExprList;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Singular;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,37 +13,31 @@ import java.util.List;
 /**
  * Created by Enzo Cotter on 2020/3/17.
  */
+@Builder
+@Data
 public class RetStmt extends SyntaxNode {
-    List<SyntaxNode> rets = new ArrayList<>();
-
-    public RetStmt(int lineNum) {
-        super(lineNum);
-    }
+    private int lineNum;
+    ExprList rets;
 
     @Override
     public void compile(Compiler compiler) {
-        for (SyntaxNode ret : rets) {
-            ret.compile(compiler);
+        if (null != rets) {
+            rets.compile(compiler);
+            compiler.insertOpCode(Opcode.RET, getLineNum(), String.valueOf(rets.getExprs().size()));
+        } else {
+            compiler.insertOpCode(Opcode.RET, getLineNum(), String.valueOf(0));
         }
-        compiler.insertOpCode(Opcode.RET, getLineNum(), String.valueOf(rets.size()));
+
 
     }
 
     @Override
     public void dumpSourceCode() {
         System.out.print("return ");
-        for (SyntaxNode ret : rets) {
-            ret.dumpSourceCode();
-            System.out.print(",");
+        if (null != rets) {
+            rets.dumpSourceCode();
         }
         System.out.println();
     }
 
-    public List<SyntaxNode> getRets() {
-        return rets;
-    }
-
-    public void setRets(List<SyntaxNode> rets) {
-        this.rets = rets;
-    }
 }

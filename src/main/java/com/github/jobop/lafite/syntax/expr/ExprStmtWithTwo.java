@@ -4,21 +4,20 @@ import com.github.jobop.lafite.compiler.Compiler;
 import com.github.jobop.lafite.runtime.opcode.Opcode;
 import com.github.jobop.lafite.syntax.SyntaxNode;
 import jdk.nashorn.internal.runtime.regexp.joni.constants.OPCode;
+import lombok.Builder;
+import lombok.Data;
 
 /**
  * Created by Enzo Cotter on 2020/3/15.
  */
+@Builder
+@Data
 public class ExprStmtWithTwo extends ExprStmt {
-    ExprStmt left = null;
+    private int lineNum;
+    SyntaxNode left = null;
     Operator op;
-    ExprStmt right = null;
+    SyntaxNode right = null;
 
-    public ExprStmtWithTwo(ExprStmt left, Operator op, ExprStmt right, int lineNum) {
-        super(lineNum);
-        this.left = left;
-        this.op = op;
-        this.right = right;
-    }
 
     @Override
     public void compile(Compiler compiler) {
@@ -56,15 +55,6 @@ public class ExprStmtWithTwo extends ExprStmt {
         }
 
 
-    }
-
-
-    public ExprStmt getLeft() {
-        return left;
-    }
-
-    public void setLeft(ExprStmt left) {
-        this.left = left;
     }
 
     @Override

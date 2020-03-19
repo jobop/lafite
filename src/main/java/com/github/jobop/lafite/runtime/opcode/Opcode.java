@@ -1,13 +1,5 @@
 package com.github.jobop.lafite.runtime.opcode;
 
-import com.sun.org.apache.bcel.internal.generic.*;
-import com.sun.tools.classfile.Instruction;
-import com.sun.tools.classfile.Instruction.Kind;
-import org.antlr.v4.runtime.ParserRuleContext;
-
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * Created by Enzo Cotter on 2020/3/9.
  */
@@ -27,8 +19,6 @@ public enum Opcode {
 //    ASSIGN                2   为元素赋值，加到局部变量表
 //    LOAD                  1   从局部变量表load一个数据到变量
     //int
-    ILDV(OpNumSet.ONE),
-    ILDC(OpNumSet.ONE),
 
     //string
     SLDV(OpNumSet.ONE),
@@ -72,8 +62,9 @@ public enum Opcode {
 //    BLOAD(OpNumSet.ONE),
     LOAD(OpNumSet.ONE),
 
-    CONSTSTORE(OpNumSet.ONE),
-    STACKSTORE(OpNumSet.ONE),
+    HEAPDECL(OpNumSet.ONE),
+    STACKDECL(OpNumSet.ONE),
+    VARASSIGN(OpNumSet.ONE),
 
 
     DUP(OpNumSet.ZERO),

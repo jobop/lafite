@@ -20,119 +20,124 @@ public class LafiteInterpreter extends LafiteParserBaseListener {
 
 
 
-//
-//    @Override
-//    public void exitAssignExprToId(CalcParser.AssignExprToIdContext ctx) {
-//        //匹配exp要继续拆解
-//        //如果是int
-////        if (ctx.expr().getRuleIndex() == 4) {
-////            compiler.insertOpCode(Opcode.LDC, ctx, ctx.expr().getText());
-////        } else if (ctx.expr().getRuleIndex() == 5) {
-////            //如果是其他ID
-////            compiler.insertOpCode(Opcode.LDV, ctx, variables.get(ctx.expr()).toString());
+////
+////    @Override
+////    public void exitAssignExprToId(CalcParser.AssignExprToIdContext ctx) {
+////        //匹配exp要继续拆解
+////        //如果是int
+//////        if (ctx.expr().getRuleIndex() == 4) {
+//////            compiler.insertOpCode(Opcode.LDC, ctx, ctx.expr().getText());
+//////        } else if (ctx.expr().getRuleIndex() == 5) {
+//////            //如果是其他ID
+//////            compiler.insertOpCode(Opcode.LDV, ctx, variables.get(ctx.expr()).toString());
+//////        } else {
+//////            //如果是其他表达式
+//////            compiler.insertOpCode(Opcode.LDC, ctx, variables.get(ctx.expr()).toString());
+//////        }
+////
+////        compiler.insertOpCode(Opcode.STORE, ctx, ctx.ID().getText());
+////
+////    }
+////
+////
+////    @Override
+////    public void exitInt(CalcParser.IntContext ctx) {
+////        compiler.insertOpCode(Opcode.LDC, ctx, ctx.INT().getText());
+////    }
+////
+////    @Override
+////    public void exitId(CalcParser.IdContext ctx) {
+////        compiler.insertOpCode(Opcode.LOAD, ctx, ctx.ID().getText());
+////    }
+////
+////
+////    @Override
+////    public void exitRet(CalcParser.RetContext ctx) {
+////        compiler.insertOpCode(Opcode.LDC, ctx, "0");
+////        compiler.insertOpCode(Opcode.RET, ctx);
+////    }
+////
+////    @Override
+////    public void exitRetINT(CalcParser.RetINTContext ctx) {
+////        compiler.insertOpCode(Opcode.LDC, ctx, ctx.INT().getText());
+////        compiler.insertOpCode(Opcode.RET, ctx);
+////    }
+////
+////    @Override
+////    public void exitRetID(CalcParser.RetIDContext ctx) {
+////        compiler.insertOpCode(Opcode.LOAD, ctx, ctx.ID().getText());
+////        compiler.insertOpCode(Opcode.RET, ctx);
+////    }
+////
+////    @Override
+////    public void exitOutStr(CalcParser.OutStrContext ctx) {
+////        compiler.insertOpCode(Opcode.LDC, ctx, ctx.StringLiteral().getText());
+////        compiler.insertOpCode(Opcode.OUT, ctx, ctx.StringLiteral().getText());
+////    }
+////
+////    @Override
+////    public void exitOutINT(CalcParser.OutINTContext ctx) {
+////        compiler.insertOpCode(Opcode.LDC, ctx, ctx.INT().getText());
+////        compiler.insertOpCode(Opcode.OUT, ctx, ctx.INT().getText());
+////    }
+////
+////    @Override
+////    public void exitOutID(CalcParser.OutIDContext ctx) {
+////        compiler.insertOpCode(Opcode.LOAD, ctx, ctx.ID().getText());
+////        compiler.insertOpCode(Opcode.OUT, ctx, ctx.ID().getText());
+////    }
+////
+////    @Override
+////    public void exitRetStr(CalcParser.RetStrContext ctx) {
+////        compiler.insertOpCode(Opcode.LOAD, ctx, ctx.StringLiteral().getText());
+////        compiler.insertOpCode(Opcode.OUT, ctx, ctx.StringLiteral().getText());
+////    }
+////
+////    @Override
+////    public void exitMulDiv(CalcParser.MulDivContext ctx) {
+////        if (ctx.op.getType() == CalcParser.MUL) {
+////            //分别判断参数1和参数2是ID还是INT，还是表达式
+////            compiler.insertOpCode(Opcode.MUL, ctx);
 ////        } else {
-////            //如果是其他表达式
-////            compiler.insertOpCode(Opcode.LDC, ctx, variables.get(ctx.expr()).toString());
+////            compiler.insertOpCode(Opcode.DIV, ctx);
 ////        }
-//
-//        compiler.insertOpCode(Opcode.STORE, ctx, ctx.ID().getText());
-//
-//    }
-//
-//
-//    @Override
-//    public void exitInt(CalcParser.IntContext ctx) {
-//        compiler.insertOpCode(Opcode.LDC, ctx, ctx.INT().getText());
-//    }
-//
-//    @Override
-//    public void exitId(CalcParser.IdContext ctx) {
-//        compiler.insertOpCode(Opcode.LOAD, ctx, ctx.ID().getText());
-//    }
+////    }
+////
+////    @Override
+////    public void exitAddSub(CalcParser.AddSubContext ctx) {
+////        if (ctx.op.getType() == CalcParser.ADD) {
+////            compiler.insertOpCode(Opcode.ADD, ctx);
+////        } else {
+////            compiler.insertOpCode(Opcode.SUB, ctx);
+////        }
+////    }
 //
 //
 //    @Override
-//    public void exitRet(CalcParser.RetContext ctx) {
-//        compiler.insertOpCode(Opcode.LDC, ctx, "0");
-//        compiler.insertOpCode(Opcode.RET, ctx);
+//    public void enterFunc_(LafiteParser.Func_Context ctx) {
+//        super.enterFunc_(ctx);
 //    }
 //
 //    @Override
-//    public void exitRetINT(CalcParser.RetINTContext ctx) {
-//        compiler.insertOpCode(Opcode.LDC, ctx, ctx.INT().getText());
-//        compiler.insertOpCode(Opcode.RET, ctx);
+//    public void exitFunc_(LafiteParser.Func_Context ctx) {
 //    }
 //
 //    @Override
-//    public void exitRetID(CalcParser.RetIDContext ctx) {
-//        compiler.insertOpCode(Opcode.LOAD, ctx, ctx.ID().getText());
-//        compiler.insertOpCode(Opcode.RET, ctx);
+//    public void exitLoperandName_IDENTIFIER(LafiteParser.LoperandName_IDENTIFIERContext ctx) {
 //    }
 //
 //    @Override
-//    public void exitOutStr(CalcParser.OutStrContext ctx) {
-//        compiler.insertOpCode(Opcode.LDC, ctx, ctx.StringLiteral().getText());
-//        compiler.insertOpCode(Opcode.OUT, ctx, ctx.StringLiteral().getText());
+//    public void exitLinvokeParam_arguments_(LafiteParser.LinvokeParam_arguments_Context ctx) {
+//        System.out.println(ctx.arguments().getText());
 //    }
 //
 //    @Override
-//    public void exitOutINT(CalcParser.OutINTContext ctx) {
-//        compiler.insertOpCode(Opcode.LDC, ctx, ctx.INT().getText());
-//        compiler.insertOpCode(Opcode.OUT, ctx, ctx.INT().getText());
+//    public void exitLcallFunc(LafiteParser.LcallFuncContext ctx) {
 //    }
 //
 //    @Override
-//    public void exitOutID(CalcParser.OutIDContext ctx) {
-//        compiler.insertOpCode(Opcode.LOAD, ctx, ctx.ID().getText());
-//        compiler.insertOpCode(Opcode.OUT, ctx, ctx.ID().getText());
+//    public void exitLoperand_methodExpr_(LafiteParser.Loperand_methodExpr_Context ctx) {
 //    }
-//
-//    @Override
-//    public void exitRetStr(CalcParser.RetStrContext ctx) {
-//        compiler.insertOpCode(Opcode.LOAD, ctx, ctx.StringLiteral().getText());
-//        compiler.insertOpCode(Opcode.OUT, ctx, ctx.StringLiteral().getText());
-//    }
-//
-//    @Override
-//    public void exitMulDiv(CalcParser.MulDivContext ctx) {
-//        if (ctx.op.getType() == CalcParser.MUL) {
-//            //分别判断参数1和参数2是ID还是INT，还是表达式
-//            compiler.insertOpCode(Opcode.MUL, ctx);
-//        } else {
-//            compiler.insertOpCode(Opcode.DIV, ctx);
-//        }
-//    }
-//
-//    @Override
-//    public void exitAddSub(CalcParser.AddSubContext ctx) {
-//        if (ctx.op.getType() == CalcParser.ADD) {
-//            compiler.insertOpCode(Opcode.ADD, ctx);
-//        } else {
-//            compiler.insertOpCode(Opcode.SUB, ctx);
-//        }
-//    }
-
-
-    @Override
-    public void exitFunc_(LafiteParser.Func_Context ctx) {
-    }
-
-    @Override
-    public void exitLoperandName_IDENTIFIER(LafiteParser.LoperandName_IDENTIFIERContext ctx) {
-    }
-
-    @Override
-    public void exitLinvokeParam_arguments_(LafiteParser.LinvokeParam_arguments_Context ctx) {
-        System.out.println(ctx.arguments().getText());
-    }
-
-    @Override
-    public void exitLcallFunc(LafiteParser.LcallFuncContext ctx) {
-    }
-
-    @Override
-    public void exitLoperand_methodExpr_(LafiteParser.Loperand_methodExpr_Context ctx) {
-    }
 
     public Compiler getCompiler() {
         return compiler;
@@ -142,7 +147,7 @@ public class LafiteInterpreter extends LafiteParserBaseListener {
         return compiler.dumpToHex();
     }
 
-    public void toFile(File file) {
+    public void writeToFile(File file) {
         compiler.genFile(file);
     }
 }

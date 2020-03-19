@@ -11,6 +11,8 @@ import com.github.jobop.lafite.runtime.vm.lmm.main.MetaSpace;
 import com.github.jobop.lafite.runtime.vm.lmm.work.PcPointer;
 import com.github.jobop.lafite.runtime.vm.lmm.work.VmStack;
 import com.github.jobop.lafite.runtime.vm.lmm.work.VmStackFrame;
+import jdk.nashorn.internal.runtime.regexp.joni.constants.OPCode;
+import org.apache.commons.lang.StringEscapeUtils;
 
 import java.util.*;
 
@@ -29,26 +31,52 @@ public class ProcessEngine implements IProcessEngine {
         String functionInfoMapStr = byteCodeSplitor.getFunctionInfoMapStr();
 
 
-        Map<String, JSONObject> functionMap = JSON.parseObject(functionInfoMapStr, HashMap.class);
-        functionMap.forEach((key, value) -> {
-            metaSpace.getMethodDescs().put(key, value.toJavaObject(FunctionInfo.class));
-        });
-
+        if (null != functionInfoMapStr && !functionInfoMapStr.equals("")) {
+            Map<String, JSONObject> functionMap = JSON.parseObject(functionInfoMapStr, HashMap.class);
+            functionMap.forEach((key, value) -> {
+                metaSpace.getMethodDescs().put(key, value.toJavaObject(FunctionInfo.class));
+            });
+        }
 
         //寻找main入口
         FunctionInfo mainFunction = metaSpace.getMethodDescs().get("main.main");
 
-        Hashtable<String, Object> constTable = new Hashtable<String, Object>();
+        List<Command> commands = OpcodeUtils.parseCommand(byteCommand);
+        //先寻找常量定义段
+        int startPos = 0;
+        int endConstPos = queryEndConstPos(commands);
+        int mainCodeStartPos = mainFunction.getSeq();
+        int endPos = commands.size();
 
+
+        programStart(commands, 0, endConstPos);
+
+        programStart(commands, mainCodeStartPos, endPos);
+
+
+        return null;
+    }
+
+    private void invokeConst(List<Command> commands, int startPos, int endPos) {
+        PcPointer pc = new PcPointer();
+        pc.set(startPos);
+        //加一个栈帧
+        invokeByteCode(commands, endPos, null, pc);
+    }
+
+    private void programStart(List<Command> commands, int startPos, int endPos) {
         VmStack vmStack = new VmStack();
         PcPointer pc = new PcPointer();
-        pc.set(mainFunction.getSeq());
+        pc.set(startPos);
         //加一个栈帧
         vmStack.push(new VmStackFrame());
-        List<Command> commands = OpcodeUtils.parseCommand(byteCommand);
 
+        invokeByteCode(commands, endPos, vmStack, pc);
+    }
+
+    private void invokeByteCode(List<Command> commands, int endPos, VmStack vmStack, PcPointer pc) {
         for (; ; ) {
-            if (pc.get() >= commands.size()) {
+            if (pc.get() >= endPos) {
                 break;
             }
             Command command = commands.get(pc.get());
@@ -128,7 +156,12 @@ public class ProcessEngine implements IProcessEngine {
                 pc.add();
                 continue;
             }
-            if (opcode == Opcode.STACKSTORE) {
+            if (opcode == Opcode.STACKDECL) {
+                //如果原来就已经定义过，要抛出运行时异常
+                if (null != vmStack.peek().getLocalVarTable().get(addrs.get(0))) {
+                    throw new RuntimeException(addrs.get(0) + " dumplicate define!");
+                }
+
 
                 //把操作数栈的顶元素出栈，存入局部变量表的变量
                 Object o = vmStack.peek().pop();
@@ -137,22 +170,45 @@ public class ProcessEngine implements IProcessEngine {
                 pc.add();
                 continue;
             }
-            if (opcode == Opcode.CONSTSTORE) {
+            if (opcode == Opcode.HEAPDECL) {
+
+                if (null != heapSpace.getGlobalTable().get(addrs.get(0))) {
+                    throw new RuntimeException(addrs.get(0) + " dumplicate define!");
+                }
 
                 //把操作数栈的顶元素出栈，存入全局变量表的变量
                 Object o = vmStack.peek().pop();
-                constTable.put(addrs.get(0), o);
+                heapSpace.getGlobalTable().put(addrs.get(0), o);
                 //程序计数器+1
                 pc.add();
                 continue;
             }
+            if (opcode == Opcode.VARASSIGN) {
+
+                //把操作数栈的顶元素出栈，看是全局变量还是局部变量
+                Object o = vmStack.peek().pop();
+                //如果定义了局部变量则先存入栈内，否则存入堆内
+
+                if (null != vmStack.peek().getLocalVarTable().get(addrs.get(0))) {
+                    vmStack.peek().getLocalVarTable().put(addrs.get(0), o);
+                } else if (null != heapSpace.getGlobalTable().get(addrs.get(0))) {
+                    heapSpace.getGlobalTable().put(addrs.get(0), o);
+                } else {
+                    throw new RuntimeException("no var [" + addrs.get(0) + "] define!");
+                }
+
+                //程序计数器+1
+                pc.add();
+                continue;
+            }
+
+
             if (opcode == Opcode.LOAD) {
-                //FIXME:
                 //这里优先找局部变量，再找全局变量？？
                 //从局部变量表取元素，然后压栈
-                Object o = constTable.get(addrs.get(0));
+                Object o = o = vmStack.peek().getLocalVarTable().get(addrs.get(0));
                 if (null == o) {
-                    o = vmStack.peek().getLocalVarTable().get(addrs.get(0));
+                    o = heapSpace.getGlobalTable().get(addrs.get(0));
                 }
                 vmStack.peek().push(o);
                 //程序计数器+1
@@ -234,7 +290,10 @@ public class ProcessEngine implements IProcessEngine {
             if (opcode == Opcode.OUT) {
                 //从栈顶取1个元素,输出
                 Object o = vmStack.peek().pop();
-                System.out.println(o);
+//                if(o.equals("\\r\\n")){
+//                    o="\r\n";
+//                }
+                System.out.print(o);
 
                 //程序计数器+1
                 pc.add();
@@ -390,8 +449,7 @@ public class ProcessEngine implements IProcessEngine {
                 //从栈顶取2个元素
                 Long o1 = (Long) vmStack.peek().pop();
                 Long o2 = (Long) vmStack.peek().pop();
-                //判断元素2大于元素1是否
-                if (o1 == 1l && o2 == 2l) {
+                if (o1 == 1l && o2 == 1l) {
                     vmStack.peek().push(Long.valueOf(1));
                 } else {
                     vmStack.peek().push(Long.valueOf(0));
@@ -407,8 +465,7 @@ public class ProcessEngine implements IProcessEngine {
                 //从栈顶取2个元素
                 Long o1 = (Long) vmStack.peek().pop();
                 Long o2 = (Long) vmStack.peek().pop();
-                //判断元素2大于元素1是否
-                if (o1 == 1l || o2 == 2l) {
+                if (o1 == 1l || o2 == 1l) {
                     vmStack.peek().push(Long.valueOf(1));
                 } else {
                     vmStack.peek().push(Long.valueOf(0));
@@ -439,9 +496,6 @@ public class ProcessEngine implements IProcessEngine {
                 continue;
             }
         }
-
-
-        return null;
     }
 
     public static MetaSpace getMetaSpace() {
@@ -488,5 +542,28 @@ public class ProcessEngine implements IProcessEngine {
             }
             return this;
         }
+    }
+
+
+    private int queryEndConstPos(List<Command> commands) {
+        int pos = 0;
+        for (int i = 0; i < commands.size(); i++) {
+            pos = i;
+            Command command = commands.get(i);
+            //找到第一个fuc的地方就是常量初始化结束
+            if (command.getOpCode() == Opcode.FUC) {
+                break;
+            }
+        }
+        return pos;
+    }
+
+    public static void main(String[] args){
+        String s="\\r\\n";
+        String s2="\r\n";
+        System.out.println(s);
+        System.out.println(s2);
+
+        System.out.println(StringEscapeUtils.unescapeJava(s));
     }
 }
