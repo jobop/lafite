@@ -3,9 +3,7 @@ package com.github.jobop.lafite;
 import com.github.jobop.lafite.compiler.Compiler;
 import com.github.jobop.lafite.runtime.vm.execute.ProcessEngine;
 import com.github.jobop.lafite.syntax.*;
-import com.github.jobop.lafite.syntax.expr.ExprStmtData;
-import com.github.jobop.lafite.syntax.expr.ExprStmtIdentify;
-import com.github.jobop.lafite.syntax.expr.ExprStmtWithTwo;
+import com.github.jobop.lafite.syntax.expr.*;
 import com.github.jobop.lafite.syntax.expr.Operator;
 import com.github.jobop.lafite.utils.TypeUtils;
 
@@ -34,13 +32,21 @@ public class Test {
         SourceStmt ss = SourceStmt.builder()
                 .lineNum(0)
                 .namespace(ns1)
+                .build();
+
+        SourceStmt ss2 = SourceStmt.builder()
+                .lineNum(0)
                 .namespace(ns2)
                 .build();
 
 
         Compiler compiler = new Compiler();
+
         ss.compile(compiler);
+        ss2.compile(compiler);
+
         ss.dumpSourceCode();
+        ss2.dumpSourceCode();
 
         compiler.dumpByteCode();
 
@@ -54,6 +60,7 @@ public class Test {
         FunctionStmt functionStmt = FunctionStmt.builder()
                 .nameSpace("main")
                 .functionName("main")
+                .signatureStmt(SignatureStmt.builder().parameterList(ParametersStmt.builder().pids(ParamIdentifierListStmt.builder().build()).build()).build())
                 .lineNum(1)
                 .block(assembleCallFunctionBlockStmt())
                 .build();
@@ -65,9 +72,10 @@ public class Test {
 
 
         CallStmt callStmt = CallStmt.builder().lineNum(3)
-                .nameSpace("nameSpace2").functionName("fuckFunction2")
-                .param(ExprStmtData.builder().lineNum(3).data(TypeUtils.transferType("66")).build())
-                .param(ExprStmtData.builder().lineNum(3).data(TypeUtils.transferType("77")).build()).build();
+                .functionId("nameSpace2.fuckFunction2")
+                .params(ExprList.builder().expr(ExprStmtData.builder().lineNum(3).data(TypeUtils.transferType("66")).build())
+                        .expr(ExprStmtData.builder().lineNum(3).data(TypeUtils.transferType("77")).build()).build())
+                .build();
 
         LocalVarDeclMultiStmt localVarDeclMultiStmt = LocalVarDeclMultiStmt.builder().lineNum(11)
                 .dataName("o1").dataName("o2").data(callStmt).build();
@@ -76,19 +84,22 @@ public class Test {
         ExprStmtIdentify o1 = ExprStmtIdentify.builder().lineNum(12).idName("o1").build();
         ExprStmtIdentify o2 = ExprStmtIdentify.builder().lineNum(12).idName("o2").build();
 
-        BuildInFunction.OutStmt out1 = BuildInFunction.OutStmt.builder().lineNum(12).expr(o1).build();
-        BuildInFunction.OutStmt out2 = BuildInFunction.OutStmt.builder().lineNum(12).expr(o2).build();
+        BuildInFunction.OutStmt out1 = BuildInFunction.OutStmt.builder().lineNum(12).node(ExprList.builder().expr(o1).expr(o2).build()).build();
 
         BuildInFunction.OutStmt out3 = BuildInFunction.OutStmt.builder()
                 .lineNum(12)
-                .expr(ExprStmtData.builder().data(TypeUtils.transferType("\"hello\""))
-                        .build()).build();
+                .node(
+
+                        ExprList.builder().expr(ExprStmtData.builder().data(TypeUtils.transferType("\"hello\""))
+                                .build()).build()
+
+
+                ).build();
 
 
         BlockStmt blockStmt = BlockStmt.builder().lineNum(2)
                 .node(localVarDeclMultiStmt)
                 .node(out3)
-                .node(out2)
                 .node(out1)
                 .build();
 
@@ -97,16 +108,31 @@ public class Test {
     }
 
     private static FunctionStmt assembBeCallFunction() {
+//        ExprStmtParamIdentify.builder().lineNum(4).idName("p1").build()
+//        ExprStmtParamIdentify.builder().lineNum(4).idName("p2").build()
         FunctionStmt functionStmt = FunctionStmt.builder().lineNum(4).nameSpace("nameSpace2").functionName("fuckFunction2")
-                .param(ParamStmt.builder().lineNum(4).dataName("p1").build())
-                .param(ParamStmt.builder().lineNum(4).dataName("p2").build())
+                .signatureStmt(
+
+                        SignatureStmt.builder().parameterList(
+                                ParametersStmt.builder()
+                                        .pids(
+                                                ParamIdentifierListStmt.builder()
+                                                        .node(ExprStmtParamIdentify.builder().lineNum(4).idName("p1").build())
+                                                        .node(ExprStmtParamIdentify.builder().lineNum(4).idName("p2").build())
+                                                        .build()
+                                        )
+
+                                        .build()
+
+                        ).build()
+
+
+                )
                 .block(assembleBlockStmt()).build();
 
         return functionStmt;
 
     }
-
-
 
 
     private static void testBlock() {
@@ -190,7 +216,11 @@ public class Test {
                 .build();
 
 
-        BuildInFunction.OutStmt out =  BuildInFunction.OutStmt.builder().lineNum(15).expr(et22).build();
+        BuildInFunction.OutStmt out = BuildInFunction.OutStmt.builder().lineNum(15).node(
+                ExprList.builder().expr(et22).build()
+
+
+        ).build();
 
 
         ExprStmtWithTwo et3 = ExprStmtWithTwo.builder().lineNum(15)
@@ -200,7 +230,11 @@ public class Test {
                 .build();
 
 
-        BuildInFunction.OutStmt out2 =  BuildInFunction.OutStmt.builder().lineNum(13).expr(et3).build();
+        BuildInFunction.OutStmt out2 = BuildInFunction.OutStmt.builder().lineNum(13).node(
+                ExprList.builder().expr(et3).build()
+
+
+        ).build();
 
 
         LocalVarDeclMultiStmt w1 = LocalVarDeclMultiStmt.builder().lineNum(23)
@@ -259,8 +293,10 @@ public class Test {
                 )
                 .build();
 
-        BuildInFunction.OutStmt out3 = BuildInFunction.OutStmt.builder().lineNum(23).expr(
-                ExprStmtIdentify.builder().lineNum(23).idName("w1").build()
+        BuildInFunction.OutStmt out3 = BuildInFunction.OutStmt.builder().lineNum(23).node(
+
+                ExprList.builder().expr(ExprStmtIdentify.builder().lineNum(23).idName("w1").build()).build()
+
         ).build();
 
 
@@ -283,8 +319,9 @@ public class Test {
 
 
         RetStmt rs = RetStmt.builder().lineNum(30)
-                .ret(ExprStmtIdentify.builder().lineNum(30).idName("p1").build())
-                .ret(ExprStmtIdentify.builder().lineNum(30).idName("p2").build())
+                .rets(
+                        ExprList.builder().expr(ExprStmtIdentify.builder().lineNum(30).idName("p1").build()).expr(ExprStmtIdentify.builder().lineNum(30).idName("p2").build()).build()
+                )
                 .build();
 
 

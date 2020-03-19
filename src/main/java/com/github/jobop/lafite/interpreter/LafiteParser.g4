@@ -44,6 +44,15 @@ identifierList
     : IDENTIFIER (',' IDENTIFIER)*
     ;
 
+param_identifierList
+    : IDENTIFIER (',' IDENTIFIER)*
+    ;
+
+call_param_identifierList
+    : IDENTIFIER (',' IDENTIFIER)*
+    ;
+
+
 expressionList
     : expression (',' expression)*
     ;
@@ -56,7 +65,6 @@ expressionList
 functionDecl
     : 'func' IDENTIFIER (signature block?)
     ;
-
 
 
 varDecl
@@ -76,7 +84,7 @@ statementList
     ;
 
 statement
-    : declaration
+    : shortVarDecl
     | simpleStmt
     | laStmt
     | returnStmt
@@ -84,12 +92,15 @@ statement
     | continueStmt
     | block
     | ifStmt
-    | forStmt
+    | whileStmt
+    | outStmt
     ;
+
+
 
 simpleStmt
     : expressionStmt
-    | incDecStmt
+    | incDecStmt //TODO
     | assignment
     | shortVarDecl
     | emptyStmt
@@ -105,11 +116,11 @@ incDecStmt
     ;
 
 assignment
-    : expressionList assign_op expressionList
+    : identifierList assign_op expressionList
     ;
 
 assign_op
-    : ('+' | '-' | '|' | '^' | '*' | '/' | '%' | '<<' | '>>' | '&' | '&^')? '='
+    : '='
     ;
 
 shortVarDecl
@@ -125,21 +136,34 @@ returnStmt
     : 'return' expressionList?
     ;
 
+outStmt
+    : OUT (mixList)(',' mixList)*
+    ;
+//TODO:
+mixList
+    :basicLit
+    |expression
+    |IDENTIFIER
+    ;
+
 breakStmt
-    : 'break' IDENTIFIER?
+    : 'break'
     ;
 
 continueStmt
-    : 'continue' IDENTIFIER?
+    : 'continue'
     ;
 
 
 
 
 ifStmt
-    : 'if' (simpleStmt ';')? expression block ('else' (ifStmt | block))?
+    : 'if' expression block ('else' (ifStmt | block))?
     ;
 
+whileStmt
+    : WHILE expression block
+    ;
 
 recvStmt
     : (expressionList '=' | identifierList ':=')? expression
@@ -171,7 +195,7 @@ arrayLength
 
 
 methodSpec
-    : {noTerminatorAfterParams(2)}? IDENTIFIER parameters result
+    : {noTerminatorAfterParams(2)}? IDENTIFIER parameters
     | IDENTIFIER parameters
     ;
 
@@ -180,24 +204,25 @@ functionType
     ;
 
 signature
-    : {noTerminatorAfterParams(1)}? parameters result
-    | parameters
-    ;
-
-result
     : parameters
     ;
 
+
 parameters
-    : '(' (parameterDecl (COMMA parameterDecl)* COMMA?)? ')'
+//    : '(' (parameterDecl (COMMA parameterDecl)* COMMA?)? ')'
+    : '(' param_identifierList? ')'
     ;
 
-parameterDecl
-    : identifierList? '...'?
+call_parameters
+//    : '(' (parameterDecl (COMMA parameterDecl)* COMMA?)? ')'
+    : '(' call_param_identifierList? ')'
     ;
+
+
 
 expression
-    : primaryExpr                                   #primaryExpr_
+    : callStmt                                      #callParent_
+    | primaryExpr                                   #primaryExpr_
     | unaryExpr                                     #unaryExpr_
     | expression ('*' | '/' | '%' ) expression      #muldivmodExpr_
     | expression ('+' | '-' ) expression            #addsubExpr_
@@ -218,6 +243,11 @@ primaryExpr
     : operand
     | primaryExpr (invokeParam)
     ;
+
+callStmt
+    :methodExpr arguments #call_
+    ;
+
 
 invokeParam
     :DOT IDENTIFIER
@@ -258,7 +288,7 @@ operandName
     ;
 
 qualifiedIdent
-    : IDENTIFIER '.' IDENTIFIER #LcallFunc
+    : IDENTIFIER '.' IDENTIFIER
     ;
 
 compositeLit
@@ -317,7 +347,7 @@ arguments
     ;
 
 methodExpr
-    : IDENTIFIER DOT IDENTIFIER
+    : (IDENTIFIER DOT)? IDENTIFIER #methodExpr_
     ;
 
 eos

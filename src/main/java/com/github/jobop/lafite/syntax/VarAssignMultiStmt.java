@@ -24,10 +24,10 @@ public class VarAssignMultiStmt extends SyntaxNode {
     @Override
     public void compile(Compiler compiler) {
         data.compile(compiler);
-        for (String dataName : dataNames) {
-            compiler.insertOpCode(Opcode.VARASSIGN, getLineNum(), dataName);
+        //反过来取栈数据
+        for(int i=dataNames.size()-1;i>=0;i--){
+            compiler.insertOpCode(Opcode.VARASSIGN, getLineNum(), dataNames.get(i));
         }
-
     }
 
     @Override

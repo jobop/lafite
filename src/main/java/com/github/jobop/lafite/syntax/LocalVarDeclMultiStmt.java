@@ -28,10 +28,10 @@ public class LocalVarDeclMultiStmt extends SyntaxNode {
             data.compile(compiler);
         }
 
-        for (String dataName : dataNames) {
-            compiler.insertOpCode(Opcode.STACKDECL, getLineNum(), dataName);
+        //反过来取栈数据
+        for(int i=dataNames.size()-1;i>=0;i--){
+            compiler.insertOpCode(Opcode.STACKDECL, getLineNum(), dataNames.get(i));
         }
-
     }
 
     @Override

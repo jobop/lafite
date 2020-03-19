@@ -126,6 +126,30 @@ public class LafiteParserBaseListener implements LafiteParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterParam_identifierList(LafiteParser.Param_identifierListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitParam_identifierList(LafiteParser.Param_identifierListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterCall_param_identifierList(LafiteParser.Call_param_identifierListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCall_param_identifierList(LafiteParser.Call_param_identifierListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterExpressionList(LafiteParser.ExpressionListContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -306,6 +330,30 @@ public class LafiteParserBaseListener implements LafiteParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterOutStmt(LafiteParser.OutStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOutStmt(LafiteParser.OutStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterMixList(LafiteParser.MixListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitMixList(LafiteParser.MixListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterBreakStmt(LafiteParser.BreakStmtContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -337,6 +385,18 @@ public class LafiteParserBaseListener implements LafiteParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitIfStmt(LafiteParser.IfStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterWhileStmt(LafiteParser.WhileStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitWhileStmt(LafiteParser.WhileStmtContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -450,18 +510,6 @@ public class LafiteParserBaseListener implements LafiteParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterResult(LafiteParser.ResultContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitResult(LafiteParser.ResultContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterParameters(LafiteParser.ParametersContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -474,13 +522,13 @@ public class LafiteParserBaseListener implements LafiteParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterParameterDecl(LafiteParser.ParameterDeclContext ctx) { }
+	@Override public void enterCall_parameters(LafiteParser.Call_parametersContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitParameterDecl(LafiteParser.ParameterDeclContext ctx) { }
+	@Override public void exitCall_parameters(LafiteParser.Call_parametersContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -505,6 +553,18 @@ public class LafiteParserBaseListener implements LafiteParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitUnaryExpr_(LafiteParser.UnaryExpr_Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterCallParent_(LafiteParser.CallParent_Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCallParent_(LafiteParser.CallParent_Context ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -594,6 +654,18 @@ public class LafiteParserBaseListener implements LafiteParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterCall_(LafiteParser.Call_Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCall_(LafiteParser.Call_Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterInvokeParam(LafiteParser.InvokeParamContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -666,13 +738,13 @@ public class LafiteParserBaseListener implements LafiteParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLcallFunc(LafiteParser.LcallFuncContext ctx) { }
+	@Override public void enterQualifiedIdent(LafiteParser.QualifiedIdentContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLcallFunc(LafiteParser.LcallFuncContext ctx) { }
+	@Override public void exitQualifiedIdent(LafiteParser.QualifiedIdentContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -810,13 +882,13 @@ public class LafiteParserBaseListener implements LafiteParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterMethodExpr(LafiteParser.MethodExprContext ctx) { }
+	@Override public void enterMethodExpr_(LafiteParser.MethodExpr_Context ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitMethodExpr(LafiteParser.MethodExprContext ctx) { }
+	@Override public void exitMethodExpr_(LafiteParser.MethodExpr_Context ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

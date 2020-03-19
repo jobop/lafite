@@ -24,7 +24,6 @@ import java.io.InputStream;
 public class Main {
     public static void main(String[] args) throws Exception {
         InputStream is = new FileInputStream(new File("/Users/zhengwei/projects/java/lafite/src/main/lafiles/aaa.la"));
-        System.out.println("正在编译...");
         ANTLRInputStream input = new ANTLRInputStream(is);
         LafiteLexer lexer = new LafiteLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -35,16 +34,26 @@ public class Main {
 //        parser.addParseListener(interpreter);
         LafiteParseVisitorImpl visitor=new LafiteParseVisitorImpl();
 
+
+
         visitor.visit(parser.sourceFile());
-        System.out.println("源码:");
-        visitor.dumpSourceCode();
+
+
+//        System.out.println("源码:");
+//        visitor.dumpSourceCode();
 
         Compiler compiler=new Compiler();
 
         visitor.compile(compiler);
-        System.out.println();
-        System.out.println("字节码:");
-        compiler.dumpByteCode();
+//        System.out.println();
+//        System.out.println("字节码:");
+//        compiler.dumpByteCode();
+
+
+//        System.out.println("开始执行:");
+
+        ProcessEngine engine = new ProcessEngine();
+        engine.execute(compiler.getAssembByteCode());
 
 
         // print LISP-style tree

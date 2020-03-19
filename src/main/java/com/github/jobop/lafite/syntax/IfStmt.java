@@ -13,7 +13,7 @@ import lombok.Data;
 @Data
 public class IfStmt extends SyntaxNode {
     private int lineNum;
-    ExprStmt condition = null;
+    SyntaxNode condition = null;
 
     BlockStmt block = null;
 

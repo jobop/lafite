@@ -14,7 +14,7 @@ import lombok.Data;
 public class WhileStmt extends SyntaxNode {
     private int lineNum;
 
-    ExprStmt condition = null;
+    SyntaxNode condition = null;
 
     BlockStmt block = null;
 

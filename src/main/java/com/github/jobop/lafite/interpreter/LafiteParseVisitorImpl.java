@@ -1,14 +1,10 @@
 package com.github.jobop.lafite.interpreter;
 
-import com.alibaba.fastjson.JSON;
 import com.github.jobop.lafite.compiler.Compiler;
 import com.github.jobop.lafite.syntax.*;
 import com.github.jobop.lafite.syntax.expr.*;
 import com.github.jobop.lafite.syntax.expr.Operator;
 import com.github.jobop.lafite.utils.TypeUtils;
-import org.antlr.v4.runtime.tree.ErrorNode;
-import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
@@ -122,15 +118,51 @@ public class LafiteParseVisitorImpl extends LafiteParserBaseVisitor<Object> {
 
     //TODO:处理方法调用之类，这里要拆分(这里不能返回null，如果返回null就跟踪不下去了)
 //    @Override
-//    public SyntaxNode visitPrimaryExpr_(LafiteParser.PrimaryExpr_Context ctx) {
+//    public Object visitPrimaryExpr_(LafiteParser.PrimaryExpr_Context ctx) {
 //        return super.visitPrimaryExpr_(ctx);
 //    }
+
+
+    @Override
+    public CallStmt visitCall_(LafiteParser.Call_Context ctx) {
+        //方法名
+        String methodName = (String) visit(ctx.methodExpr());
+        //方法实参
+        ExprList argus = (ExprList) visit(ctx.arguments());
+
+        return CallStmt.builder().functionId(methodName).params(argus).build();
+    }
+
+    //被调用方法名
+    @Override
+    public String visitMethodExpr_(LafiteParser.MethodExpr_Context ctx) {
+        String methodName = "";
+        if (null == ctx.DOT()) {
+            methodName = this.currentNamespace.getNameSpaceName() + "." + ctx.IDENTIFIER(0).getText();
+        } else {
+            methodName = ctx.IDENTIFIER(0).getText() + "." + ctx.IDENTIFIER(1).getText();
+        }
+        return methodName;
+    }
+
+    //被调用方法参数
+    @Override
+    public ExprList visitArguments(LafiteParser.ArgumentsContext ctx) {
+        if (null != ctx.expressionList()) {
+            return (ExprList) visit(ctx.expressionList());
+        } else {
+            return ExprList.builder().build();
+        }
+
+
+    }
+
 
     //处理操作数名（等号右边的变量名）
     @Override
     public Object visitOperandName(LafiteParser.OperandNameContext ctx) {
         if (null != ctx.IDENTIFIER()) {
-            return ExprStmtIdentify.builder().idName(ctx.getText()).build();
+            return ExprStmtIdentify.builder().idName(ctx.IDENTIFIER().getText()).build();
         } else if (null != ctx.qualifiedIdent()) {
             return null;
         }
@@ -245,27 +277,203 @@ public class LafiteParseVisitorImpl extends LafiteParserBaseVisitor<Object> {
         return node;
     }
 
+    @Override
+    public SyntaxNode visitCompareExpr_(LafiteParser.CompareExpr_Context ctx) {
+        SyntaxNode node = null;
+        Operator op = null;
+        if (null != ctx.GREATER()) {
+            op = Operator.GT;
+        } else if (null != ctx.GREATER_OR_EQUALS()) {
+            op = Operator.GTEQ;
+        } else if (null != ctx.LESS()) {
+            op = Operator.LT;
+        } else if (null != ctx.LESS_OR_EQUALS()) {
+            op = Operator.LTEQ;
+        } else if (null != ctx.EQUALS()) {
+            op = Operator.EQEQ;
+        } else {
+            throw new RuntimeException("unknow op");
+        }
+
+        node = ExprStmtWithTwo.builder()
+                .left((SyntaxNode) visit(ctx.expression(0)))
+                .op(op)
+                .right((SyntaxNode) visit(ctx.expression(1)))
+                .build();
+
+        return node;
+    }
+
 
     //解析表达式 end:
 
 
-    //TODO:解析方法定义
+    //解析方法定义start
     @Override
     public FunctionStmt visitFunctionDecl(LafiteParser.FunctionDeclContext ctx) {
 
         FunctionStmt functionStmt = null;
         dealingFunctionCount++;
         //方法参数
+        SignatureStmt signatureStmt = (SignatureStmt) visit(ctx.signature());
 
         //方法体
+        BlockStmt funcBlockStmt = (BlockStmt) visit(ctx.block());
 
-
-
-        FunctionStmt.builder().nameSpace(currentNamespace.getNameSpaceName()).functionName(ctx.IDENTIFIER().getText()).build();
+        functionStmt = FunctionStmt.builder()
+                .nameSpace(currentNamespace.getNameSpaceName())
+                .functionName(ctx.IDENTIFIER().getText())
+                .signatureStmt(signatureStmt)
+                .block(funcBlockStmt)
+                .build();
         dealingFunctionCount--;
         return functionStmt;
     }
 
+    //解析方法参数start
+    @Override
+    public SignatureStmt visitSignature(LafiteParser.SignatureContext ctx) {
+
+
+        ParametersStmt parameters = (ParametersStmt) visitParameters(ctx.parameters());
+
+        return SignatureStmt.builder().parameterList(parameters).build();
+    }
+
+    @Override
+    public ParametersStmt visitParameters(LafiteParser.ParametersContext ctx) {
+
+        if (null != ctx.param_identifierList()) {
+            ParamIdentifierListStmt pids = (ParamIdentifierListStmt) visit(ctx.param_identifierList());
+            return ParametersStmt.builder().pids(pids).build();
+        } else {
+            return ParametersStmt.builder().build();
+        }
+
+
+    }
+
+    @Override
+    public ParamIdentifierListStmt visitParam_identifierList(LafiteParser.Param_identifierListContext ctx) {
+
+        List<ExprStmtParamIdentify> params = new ArrayList<>();
+        for (TerminalNode node : ctx.IDENTIFIER()) {
+            params.add(ExprStmtParamIdentify.builder().idName(node.getText()).build());
+        }
+        return ParamIdentifierListStmt.builder().nodes(params).build();
+    }
+    //解析方法参数end
+
+
+    //解析方法体start
+
+    @Override
+    public BlockStmt visitBlock(LafiteParser.BlockContext ctx) {
+        List<SyntaxNode> blockInsizeNodes = new ArrayList<>();
+        if (null != ctx.statementList()) {
+            blockInsizeNodes = (List<SyntaxNode>) visit(ctx.statementList());
+        }
+        return BlockStmt.builder().nodes(blockInsizeNodes).build();
+    }
+
+    @Override
+    public List<SyntaxNode> visitStatementList(LafiteParser.StatementListContext ctx) {
+        List<SyntaxNode> statements = new ArrayList<>();
+        for (LafiteParser.StatementContext sctx : ctx.statement()) {
+            statements.add((SyntaxNode) visit(sctx));
+        }
+        return statements;
+    }
+
+
+    //解析方法体end
+
+    //解析方法定义end
+
+
+    //解析block中各种元素start
+//    : shortVarDecl
+//    | simpleStmt
+//    | laStmt
+//    | returnStmt
+//    | breakStmt
+//    | continueStmt
+//    | block
+//    | ifStmt
+//    | forStmt
+
+    @Override
+    public RetStmt visitReturnStmt(LafiteParser.ReturnStmtContext ctx) {
+        if (null != ctx.expressionList()) {
+            ExprList exprList = visitExpressionList(ctx.expressionList());
+            return RetStmt.builder().rets(exprList).build();
+        } else {
+            return RetStmt.builder().build();
+        }
+    }
+
+    //赋值
+    @Override
+    public VarAssignMultiStmt visitAssignment(LafiteParser.AssignmentContext ctx) {
+        List<String> identifierNodes = (List<String>) visit(ctx.identifierList());
+
+        ExprList el = (ExprList) visit(ctx.expressionList());
+
+        return VarAssignMultiStmt.builder().dataNames(identifierNodes).data(el).build();
+    }
+
+    @Override
+    public BuildInFunction.OutStmt visitOutStmt(LafiteParser.OutStmtContext ctx) {
+
+        List<SyntaxNode> nodes = new ArrayList<>();
+        for (LafiteParser.MixListContext mixList : ctx.mixList()) {
+            nodes.add((SyntaxNode) visit(mixList));
+        }
+
+        return BuildInFunction.OutStmt.builder().nodes(nodes).build();
+    }
+
+    @Override
+    public Object visitMixList(LafiteParser.MixListContext ctx) {
+
+        if (null != ctx.IDENTIFIER()) {
+            return ExprStmtIdentify.builder().idName(ctx.IDENTIFIER().getText());
+
+        } else if (null != ctx.expression()) {
+            //委托下去
+            return visit(ctx.expression());
+        } else {
+            //委托下去
+            return visit(ctx.basicLit());
+        }
+
+    }
+
+
+    //解析ifelse
+
+    //TODO:增加elseif
+    @Override
+    public IfStmt visitIfStmt(LafiteParser.IfStmtContext ctx) {
+
+        SyntaxNode condition = (SyntaxNode) visit(ctx.expression());
+        BlockStmt ifBlock = (BlockStmt) visit(ctx.block(0));
+
+        BlockStmt elseBlock = (BlockStmt) visit(ctx.block(1));
+        return IfStmt.builder().condition(condition)
+                .block(ifBlock)
+                .elseBlock(elseBlock).build();
+    }
+
+    @Override
+    public WhileStmt visitWhileStmt(LafiteParser.WhileStmtContext ctx) {
+        SyntaxNode condition = (SyntaxNode) visit(ctx.expression());
+
+        BlockStmt block = (BlockStmt) visit(ctx.block());
+        return WhileStmt.builder().condition(condition).block(block).build();
+    }
+
+    //解析block中各种元素end
 
     public void compile(Compiler compiler) {
         currentSource.compile(compiler);

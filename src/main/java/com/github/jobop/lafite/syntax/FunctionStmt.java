@@ -18,21 +18,25 @@ public class FunctionStmt extends SyntaxNode {
     private int lineNum;
     String nameSpace = "";
     String functionName = "";
-    @Singular
-    List<SyntaxNode> params = new ArrayList<>();
+    SignatureStmt signatureStmt = null;
 
     BlockStmt block = null;
 
 
     @Override
     public void compile(Compiler compiler) {
-        compiler.registFuction(nameSpace + "." + functionName, params.size());
+
+
+        int paramCount = 0;
+        if (null != signatureStmt && null != signatureStmt.getParameterList() && null != signatureStmt.getParameterList().getPids()) {
+            paramCount = signatureStmt.getParameterList().getPids().getNodes().size();
+        }
+
+        compiler.registFuction(nameSpace + "." + functionName, paramCount);
         compiler.insertOpCode(Opcode.FUC, getLineNum(), nameSpace + "." + functionName);
 
         //这里会从栈里面获取数据放到局部变量（CALL的时候放进去）
-        for (SyntaxNode param : params) {
-            param.compile(compiler);
-        }
+        signatureStmt.compile(compiler);
 
         //如果没有返回语句，给他加一个(强制方法的block里面需要有return)
         boolean hasRet = false;
@@ -49,12 +53,8 @@ public class FunctionStmt extends SyntaxNode {
 
     @Override
     public void dumpSourceCode() {
-        System.out.print("func " + functionName + " (");
-        for (SyntaxNode param : params) {
-            param.dumpSourceCode();
-            System.out.print(",");
-        }
-        System.out.print(")");
+        System.out.print("func " + functionName + " ");
+        signatureStmt.dumpSourceCode();
 
         block.dumpSourceCode();
     }

@@ -102,6 +102,26 @@ public interface LafiteParserListener extends ParseTreeListener {
 	 */
 	void exitIdentifierList(LafiteParser.IdentifierListContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link LafiteParser#param_identifierList}.
+	 * @param ctx the parse tree
+	 */
+	void enterParam_identifierList(LafiteParser.Param_identifierListContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link LafiteParser#param_identifierList}.
+	 * @param ctx the parse tree
+	 */
+	void exitParam_identifierList(LafiteParser.Param_identifierListContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link LafiteParser#call_param_identifierList}.
+	 * @param ctx the parse tree
+	 */
+	void enterCall_param_identifierList(LafiteParser.Call_param_identifierListContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link LafiteParser#call_param_identifierList}.
+	 * @param ctx the parse tree
+	 */
+	void exitCall_param_identifierList(LafiteParser.Call_param_identifierListContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link LafiteParser#expressionList}.
 	 * @param ctx the parse tree
 	 */
@@ -254,6 +274,26 @@ public interface LafiteParserListener extends ParseTreeListener {
 	 */
 	void exitReturnStmt(LafiteParser.ReturnStmtContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link LafiteParser#outStmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterOutStmt(LafiteParser.OutStmtContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link LafiteParser#outStmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitOutStmt(LafiteParser.OutStmtContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link LafiteParser#mixList}.
+	 * @param ctx the parse tree
+	 */
+	void enterMixList(LafiteParser.MixListContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link LafiteParser#mixList}.
+	 * @param ctx the parse tree
+	 */
+	void exitMixList(LafiteParser.MixListContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link LafiteParser#breakStmt}.
 	 * @param ctx the parse tree
 	 */
@@ -283,6 +323,16 @@ public interface LafiteParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitIfStmt(LafiteParser.IfStmtContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link LafiteParser#whileStmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterWhileStmt(LafiteParser.WhileStmtContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link LafiteParser#whileStmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitWhileStmt(LafiteParser.WhileStmtContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link LafiteParser#recvStmt}.
 	 * @param ctx the parse tree
@@ -374,16 +424,6 @@ public interface LafiteParserListener extends ParseTreeListener {
 	 */
 	void exitSignature(LafiteParser.SignatureContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link LafiteParser#result}.
-	 * @param ctx the parse tree
-	 */
-	void enterResult(LafiteParser.ResultContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link LafiteParser#result}.
-	 * @param ctx the parse tree
-	 */
-	void exitResult(LafiteParser.ResultContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link LafiteParser#parameters}.
 	 * @param ctx the parse tree
 	 */
@@ -394,15 +434,15 @@ public interface LafiteParserListener extends ParseTreeListener {
 	 */
 	void exitParameters(LafiteParser.ParametersContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link LafiteParser#parameterDecl}.
+	 * Enter a parse tree produced by {@link LafiteParser#call_parameters}.
 	 * @param ctx the parse tree
 	 */
-	void enterParameterDecl(LafiteParser.ParameterDeclContext ctx);
+	void enterCall_parameters(LafiteParser.Call_parametersContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link LafiteParser#parameterDecl}.
+	 * Exit a parse tree produced by {@link LafiteParser#call_parameters}.
 	 * @param ctx the parse tree
 	 */
-	void exitParameterDecl(LafiteParser.ParameterDeclContext ctx);
+	void exitCall_parameters(LafiteParser.Call_parametersContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code primaryExpr_}
 	 * labeled alternative in {@link LafiteParser#expression}.
@@ -427,6 +467,18 @@ public interface LafiteParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitUnaryExpr_(LafiteParser.UnaryExpr_Context ctx);
+	/**
+	 * Enter a parse tree produced by the {@code callParent_}
+	 * labeled alternative in {@link LafiteParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterCallParent_(LafiteParser.CallParent_Context ctx);
+	/**
+	 * Exit a parse tree produced by the {@code callParent_}
+	 * labeled alternative in {@link LafiteParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitCallParent_(LafiteParser.CallParent_Context ctx);
 	/**
 	 * Enter a parse tree produced by the {@code orExpr_}
 	 * labeled alternative in {@link LafiteParser#expression}.
@@ -508,6 +560,18 @@ public interface LafiteParserListener extends ParseTreeListener {
 	 */
 	void exitPrimaryExpr(LafiteParser.PrimaryExprContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code call_}
+	 * labeled alternative in {@link LafiteParser#callStmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterCall_(LafiteParser.Call_Context ctx);
+	/**
+	 * Exit a parse tree produced by the {@code call_}
+	 * labeled alternative in {@link LafiteParser#callStmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitCall_(LafiteParser.Call_Context ctx);
+	/**
 	 * Enter a parse tree produced by {@link LafiteParser#invokeParam}.
 	 * @param ctx the parse tree
 	 */
@@ -568,17 +632,15 @@ public interface LafiteParserListener extends ParseTreeListener {
 	 */
 	void exitOperandName(LafiteParser.OperandNameContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code LcallFunc}
-	 * labeled alternative in {@link LafiteParser#qualifiedIdent}.
+	 * Enter a parse tree produced by {@link LafiteParser#qualifiedIdent}.
 	 * @param ctx the parse tree
 	 */
-	void enterLcallFunc(LafiteParser.LcallFuncContext ctx);
+	void enterQualifiedIdent(LafiteParser.QualifiedIdentContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code LcallFunc}
-	 * labeled alternative in {@link LafiteParser#qualifiedIdent}.
+	 * Exit a parse tree produced by {@link LafiteParser#qualifiedIdent}.
 	 * @param ctx the parse tree
 	 */
-	void exitLcallFunc(LafiteParser.LcallFuncContext ctx);
+	void exitQualifiedIdent(LafiteParser.QualifiedIdentContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link LafiteParser#compositeLit}.
 	 * @param ctx the parse tree
@@ -690,15 +752,17 @@ public interface LafiteParserListener extends ParseTreeListener {
 	 */
 	void exitArguments(LafiteParser.ArgumentsContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link LafiteParser#methodExpr}.
+	 * Enter a parse tree produced by the {@code methodExpr_}
+	 * labeled alternative in {@link LafiteParser#methodExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterMethodExpr(LafiteParser.MethodExprContext ctx);
+	void enterMethodExpr_(LafiteParser.MethodExpr_Context ctx);
 	/**
-	 * Exit a parse tree produced by {@link LafiteParser#methodExpr}.
+	 * Exit a parse tree produced by the {@code methodExpr_}
+	 * labeled alternative in {@link LafiteParser#methodExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitMethodExpr(LafiteParser.MethodExprContext ctx);
+	void exitMethodExpr_(LafiteParser.MethodExpr_Context ctx);
 	/**
 	 * Enter a parse tree produced by {@link LafiteParser#eos}.
 	 * @param ctx the parse tree

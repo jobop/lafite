@@ -2,6 +2,7 @@ package com.github.jobop.lafite.syntax;
 
 import com.github.jobop.lafite.compiler.Compiler;
 import com.github.jobop.lafite.runtime.opcode.Opcode;
+import com.github.jobop.lafite.syntax.expr.ExprList;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Singular;
@@ -16,24 +17,25 @@ import java.util.List;
 @Data
 public class RetStmt extends SyntaxNode {
     private int lineNum;
-    @Singular
-    List<SyntaxNode> rets = new ArrayList<>();
+    ExprList rets;
 
     @Override
     public void compile(Compiler compiler) {
-        for (SyntaxNode ret : rets) {
-            ret.compile(compiler);
+        if (null != rets) {
+            rets.compile(compiler);
+            compiler.insertOpCode(Opcode.RET, getLineNum(), String.valueOf(rets.getExprs().size()));
+        } else {
+            compiler.insertOpCode(Opcode.RET, getLineNum(), String.valueOf(0));
         }
-        compiler.insertOpCode(Opcode.RET, getLineNum(), String.valueOf(rets.size()));
+
 
     }
 
     @Override
     public void dumpSourceCode() {
         System.out.print("return ");
-        for (SyntaxNode ret : rets) {
-            ret.dumpSourceCode();
-            System.out.print(",");
+        if (null != rets) {
+            rets.dumpSourceCode();
         }
         System.out.println();
     }

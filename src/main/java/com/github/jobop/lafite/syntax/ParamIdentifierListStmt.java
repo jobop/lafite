@@ -1,7 +1,6 @@
-package com.github.jobop.lafite.syntax.expr;
+package com.github.jobop.lafite.syntax;
 
 import com.github.jobop.lafite.compiler.Compiler;
-import com.github.jobop.lafite.syntax.SyntaxNode;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Singular;
@@ -14,14 +13,14 @@ import java.util.List;
  */
 @Builder
 @Data
-public class ExprList extends SyntaxNode {
-    private int lineNum;
+public class ParamIdentifierListStmt extends SyntaxNode {
+    //PARAM_IDENTIFIER
     @Singular
-    private List<SyntaxNode> exprs = new ArrayList<>();
+    private List<SyntaxNode> nodes = new ArrayList<>();
 
     @Override
     public void compile(Compiler compiler) {
-        for (SyntaxNode node : exprs) {
+        for (SyntaxNode node : nodes) {
             node.compile(compiler);
         }
 
@@ -29,7 +28,7 @@ public class ExprList extends SyntaxNode {
 
     @Override
     public void dumpSourceCode() {
-        for (SyntaxNode node : exprs) {
+        for (SyntaxNode node : nodes) {
             node.dumpSourceCode();
             System.out.print(",");
         }

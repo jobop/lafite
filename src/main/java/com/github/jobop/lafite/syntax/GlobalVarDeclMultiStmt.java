@@ -25,9 +25,11 @@ public class GlobalVarDeclMultiStmt extends SyntaxNode {
     public void compile(Compiler compiler) {
         data.compile(compiler);
 
-        for (String dataName : dataNames) {
-            compiler.insertOpCode(Opcode.HEAPDECL, getLineNum(), dataName);
+        //反过来取栈数据
+        for(int i=dataNames.size()-1;i>=0;i--){
+            compiler.insertOpCode(Opcode.HEAPDECL, getLineNum(), dataNames.get(i));
         }
+
 
     }
 

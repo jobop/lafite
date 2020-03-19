@@ -11,6 +11,8 @@ import com.github.jobop.lafite.runtime.vm.lmm.main.MetaSpace;
 import com.github.jobop.lafite.runtime.vm.lmm.work.PcPointer;
 import com.github.jobop.lafite.runtime.vm.lmm.work.VmStack;
 import com.github.jobop.lafite.runtime.vm.lmm.work.VmStackFrame;
+import jdk.nashorn.internal.runtime.regexp.joni.constants.OPCode;
+import org.apache.commons.lang.StringEscapeUtils;
 
 import java.util.*;
 
@@ -39,16 +41,42 @@ public class ProcessEngine implements IProcessEngine {
         //寻找main入口
         FunctionInfo mainFunction = metaSpace.getMethodDescs().get("main.main");
 
+        List<Command> commands = OpcodeUtils.parseCommand(byteCommand);
+        //先寻找常量定义段
+        int startPos = 0;
+        int endConstPos = queryEndConstPos(commands);
+        int mainCodeStartPos = mainFunction.getSeq();
+        int endPos = commands.size();
 
+
+        programStart(commands, 0, endConstPos);
+
+        programStart(commands, mainCodeStartPos, endPos);
+
+
+        return null;
+    }
+
+    private void invokeConst(List<Command> commands, int startPos, int endPos) {
+        PcPointer pc = new PcPointer();
+        pc.set(startPos);
+        //加一个栈帧
+        invokeByteCode(commands, endPos, null, pc);
+    }
+
+    private void programStart(List<Command> commands, int startPos, int endPos) {
         VmStack vmStack = new VmStack();
         PcPointer pc = new PcPointer();
-        pc.set(mainFunction.getSeq());
+        pc.set(startPos);
         //加一个栈帧
         vmStack.push(new VmStackFrame());
-        List<Command> commands = OpcodeUtils.parseCommand(byteCommand);
 
+        invokeByteCode(commands, endPos, vmStack, pc);
+    }
+
+    private void invokeByteCode(List<Command> commands, int endPos, VmStack vmStack, PcPointer pc) {
         for (; ; ) {
-            if (pc.get() >= commands.size()) {
+            if (pc.get() >= endPos) {
                 break;
             }
             Command command = commands.get(pc.get());
@@ -130,8 +158,8 @@ public class ProcessEngine implements IProcessEngine {
             }
             if (opcode == Opcode.STACKDECL) {
                 //如果原来就已经定义过，要抛出运行时异常
-                if(null!=vmStack.peek().getLocalVarTable().get(addrs.get(0))){
-                    throw new RuntimeException(addrs.get(0) +" dumplicate define!");
+                if (null != vmStack.peek().getLocalVarTable().get(addrs.get(0))) {
+                    throw new RuntimeException(addrs.get(0) + " dumplicate define!");
                 }
 
 
@@ -144,8 +172,8 @@ public class ProcessEngine implements IProcessEngine {
             }
             if (opcode == Opcode.HEAPDECL) {
 
-                if(null!=heapSpace.getGlobalTable().get(addrs.get(0))){
-                    throw new RuntimeException(addrs.get(0) +" dumplicate define!");
+                if (null != heapSpace.getGlobalTable().get(addrs.get(0))) {
+                    throw new RuntimeException(addrs.get(0) + " dumplicate define!");
                 }
 
                 //把操作数栈的顶元素出栈，存入全局变量表的变量
@@ -262,7 +290,10 @@ public class ProcessEngine implements IProcessEngine {
             if (opcode == Opcode.OUT) {
                 //从栈顶取1个元素,输出
                 Object o = vmStack.peek().pop();
-                System.out.println(o);
+//                if(o.equals("\\r\\n")){
+//                    o="\r\n";
+//                }
+                System.out.print(o);
 
                 //程序计数器+1
                 pc.add();
@@ -465,9 +496,6 @@ public class ProcessEngine implements IProcessEngine {
                 continue;
             }
         }
-
-
-        return null;
     }
 
     public static MetaSpace getMetaSpace() {
@@ -514,5 +542,28 @@ public class ProcessEngine implements IProcessEngine {
             }
             return this;
         }
+    }
+
+
+    private int queryEndConstPos(List<Command> commands) {
+        int pos = 0;
+        for (int i = 0; i < commands.size(); i++) {
+            pos = i;
+            Command command = commands.get(i);
+            //找到第一个fuc的地方就是常量初始化结束
+            if (command.getOpCode() == Opcode.FUC) {
+                break;
+            }
+        }
+        return pos;
+    }
+
+    public static void main(String[] args){
+        String s="\\r\\n";
+        String s2="\r\n";
+        System.out.println(s);
+        System.out.println(s2);
+
+        System.out.println(StringEscapeUtils.unescapeJava(s));
     }
 }
