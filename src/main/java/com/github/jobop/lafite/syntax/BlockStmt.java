@@ -1,6 +1,9 @@
 package com.github.jobop.lafite.syntax;
 
 import com.github.jobop.lafite.compiler.Compiler;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Singular;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,22 +11,12 @@ import java.util.List;
 /**
  * Created by Enzo Cotter on 2020/3/14.
  */
+@Builder(toBuilder = true)
+@Data
 public class BlockStmt extends SyntaxNode {
-    List<SyntaxNode> nodes = new ArrayList<>();
-
-    public BlockStmt(int lineNum) {
-        super(lineNum);
-    }
-
-
-    public List<SyntaxNode> getNodes() {
-        return nodes;
-    }
-
-    public void setNodes(List<SyntaxNode> nodes) {
-        this.nodes = nodes;
-    }
-
+    private int lineNum;
+    @Singular
+    List<SyntaxNode> nodes ;
 
     @Override
     public void compile(Compiler compiler) {

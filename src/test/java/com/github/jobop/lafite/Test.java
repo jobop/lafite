@@ -3,9 +3,7 @@ package com.github.jobop.lafite;
 import com.github.jobop.lafite.compiler.Compiler;
 import com.github.jobop.lafite.runtime.vm.execute.ProcessEngine;
 import com.github.jobop.lafite.syntax.*;
-import com.github.jobop.lafite.syntax.expr.ExprStmtData;
-import com.github.jobop.lafite.syntax.expr.ExprStmtIdentify;
-import com.github.jobop.lafite.syntax.expr.ExprStmtWithTwo;
+import com.github.jobop.lafite.syntax.expr.*;
 import com.github.jobop.lafite.syntax.expr.Operator;
 import com.github.jobop.lafite.utils.TypeUtils;
 
@@ -16,30 +14,39 @@ public class Test {
 
 
     public static void main(String[] args) {
-        SourceStmt ss = new SourceStmt(0);
-
-        Namespace ns1 = new Namespace(1);
-        ns1.setNameSpaceName("main");
 
 
-        FunctionStmt callFunc = assembCallFunction();
-        ns1.getNodes().add(callFunc);
-
-        Namespace ns2 = new Namespace(1);
-        ns2.setNameSpaceName("nameSpace2");
-        FunctionStmt beCallFunc = assembBeCallFunction();
-        ns2.getNodes().add(beCallFunc);
+        Namespace ns1 = Namespace.builder()
+                .nameSpaceName("main")
+                .lineNum(0)
+                .node(assembCallFunction())
+                .build();
 
 
-        ss.getNamespaceList().add(ns1);
-        ss.getNamespaceList().add(ns2);
+        Namespace ns2 = Namespace.builder()
+                .nameSpaceName("nameSpace2")
+                .lineNum(1)
+                .node(assembBeCallFunction())
+                .build();
+
+        SourceStmt ss = SourceStmt.builder()
+                .lineNum(0)
+                .namespace(ns1)
+                .build();
+
+        SourceStmt ss2 = SourceStmt.builder()
+                .lineNum(0)
+                .namespace(ns2)
+                .build();
 
 
         Compiler compiler = new Compiler();
+
         ss.compile(compiler);
+        ss2.compile(compiler);
 
         ss.dumpSourceCode();
-
+        ss2.dumpSourceCode();
 
         compiler.dumpByteCode();
 
@@ -50,61 +57,78 @@ public class Test {
     }
 
     private static FunctionStmt assembCallFunction() {
-        FunctionStmt functionStmt = new FunctionStmt("main", "main", 1);
-        BlockStmt callStmt = assembleCallFunctionBlockStmt();
-
-
-        functionStmt.setBlock(callStmt);
+        FunctionStmt functionStmt = FunctionStmt.builder()
+                .nameSpace("main")
+                .functionName("main")
+                .signatureStmt(SignatureStmt.builder().parameterList(ParametersStmt.builder().pids(ParamIdentifierListStmt.builder().build()).build()).build())
+                .lineNum(1)
+                .block(assembleCallFunctionBlockStmt())
+                .build();
         return functionStmt;
 
     }
 
     private static BlockStmt assembleCallFunctionBlockStmt() {
-        BlockStmt blockStmt = new BlockStmt(2);
-
-        CallStmt callStmt = new CallStmt(3);
-        callStmt.setNameSpace("nameSpace2");
-        callStmt.setFunctionName("fuckFunction2");
-        callStmt.getParams().add(new ExprStmtData(TypeUtils.transferType("66"), 3));
-        callStmt.getParams().add(new ExprStmtData(TypeUtils.transferType("77"), 3));
-
-        VarAssignMultiStmt varAssignMultiStmt = new VarAssignMultiStmt(11);
-        varAssignMultiStmt.getDataNames().add("o1");
-        varAssignMultiStmt.getDataNames().add("o2");
-        varAssignMultiStmt.setData(callStmt);
 
 
-        blockStmt.getNodes().add(varAssignMultiStmt);
+        CallStmt callStmt = CallStmt.builder().lineNum(3)
+                .functionId("nameSpace2.fuckFunction2")
+                .params(ExprList.builder().expr(ExprStmtData.builder().lineNum(3).data(TypeUtils.transferType("66")).build())
+                        .expr(ExprStmtData.builder().lineNum(3).data(TypeUtils.transferType("77")).build()).build())
+                .build();
+
+        LocalVarDeclMultiStmt localVarDeclMultiStmt = LocalVarDeclMultiStmt.builder().lineNum(11)
+                .dataName("o1").dataName("o2").data(callStmt).build();
 
 
-        ExprStmtIdentify o1 = new ExprStmtIdentify("o1", 12);
-        ExprStmtIdentify o2 = new ExprStmtIdentify("o2", 12);
+        ExprStmtIdentify o1 = ExprStmtIdentify.builder().lineNum(12).idName("o1").build();
+        ExprStmtIdentify o2 = ExprStmtIdentify.builder().lineNum(12).idName("o2").build();
 
-        BuildInFunction.OutStmt out1 = new BuildInFunction.OutStmt(12);
-        BuildInFunction.OutStmt out2 = new BuildInFunction.OutStmt(12);
+        BuildInFunction.OutStmt out1 = BuildInFunction.OutStmt.builder().lineNum(12).node(ExprList.builder().expr(o1).expr(o2).build()).build();
 
-        BuildInFunction.OutStmt out3 = new BuildInFunction.OutStmt(12);
+        BuildInFunction.OutStmt out3 = BuildInFunction.OutStmt.builder()
+                .lineNum(12)
+                .node(
 
-        out3.setExpr(new ExprStmtData(TypeUtils.transferType("\"hello\""), 12));
+                        ExprList.builder().expr(ExprStmtData.builder().data(TypeUtils.transferType("\"hello\""))
+                                .build()).build()
 
-        out1.setExpr(o1);
-        out2.setExpr(o2);
 
-        blockStmt.getNodes().add(out3);
-        blockStmt.getNodes().add(out1);
-        blockStmt.getNodes().add(out2);
+                ).build();
 
+
+        BlockStmt blockStmt = BlockStmt.builder().lineNum(2)
+                .node(localVarDeclMultiStmt)
+                .node(out3)
+                .node(out1)
+                .build();
 
 
         return blockStmt;
     }
 
     private static FunctionStmt assembBeCallFunction() {
-        FunctionStmt functionStmt = new FunctionStmt("nameSpace2", "fuckFunction2", 4);
-        functionStmt.getParams().add(new ParamStmt("p1", 4));
-        functionStmt.getParams().add(new ParamStmt("p2", 4));
+//        ExprStmtParamIdentify.builder().lineNum(4).idName("p1").build()
+//        ExprStmtParamIdentify.builder().lineNum(4).idName("p2").build()
+        FunctionStmt functionStmt = FunctionStmt.builder().lineNum(4).nameSpace("nameSpace2").functionName("fuckFunction2")
+                .signatureStmt(
 
-        functionStmt.setBlock(assembleBlockStmt());
+                        SignatureStmt.builder().parameterList(
+                                ParametersStmt.builder()
+                                        .pids(
+                                                ParamIdentifierListStmt.builder()
+                                                        .node(ExprStmtParamIdentify.builder().lineNum(4).idName("p1").build())
+                                                        .node(ExprStmtParamIdentify.builder().lineNum(4).idName("p2").build())
+                                                        .build()
+                                        )
+
+                                        .build()
+
+                        ).build()
+
+
+                )
+                .block(assembleBlockStmt()).build();
 
         return functionStmt;
 
@@ -123,122 +147,195 @@ public class Test {
     }
 
     private static BlockStmt assembleBlockStmt() {
-        BlockStmt blockStmt = new BlockStmt(10);
-
-        ConstAssignStmt cs1 = new ConstAssignStmt(11);
-        cs1.setDataName("aaa");
-        cs1.setData(new ExprStmtData(TypeUtils.transferType("1"), 11));
-
-        ConstAssignStmt cs2 = new ConstAssignStmt(12);
-        cs2.setDataName("bbb");
 
 
-        cs2.setData(new ExprStmtWithTwo(new ExprStmtData(TypeUtils.transferType("\"asdf\""), 12), Operator.ADD, new ExprStmtData(TypeUtils.transferType("\"qwer\""), 12), 12));
-
-        ConstAssignStmt cs3 = new ConstAssignStmt(13);
-        cs3.setDataName("a");
-
-        cs3.setData(new ExprStmtData(TypeUtils.transferType("3.1415926"), 13));
+        LocalVarDeclMultiStmt cs1 = LocalVarDeclMultiStmt.builder().lineNum(11).dataName("aaa")
+                .data(ExprStmtData.builder().lineNum(11).data(TypeUtils.transferType("1")).build())
+                .build();
 
 
-        IfStmt ifStmt = new IfStmt(14);
+        ExprStmtWithTwo et2 = ExprStmtWithTwo.builder()
+                .left(ExprStmtData.builder().lineNum(12).data(TypeUtils.transferType("\"asdf\"")).build())
+                .op(Operator.ADD)
+                .right(ExprStmtData.builder().lineNum(12).data(TypeUtils.transferType("\"qwer\"")).build()).build();
 
-        ExprStmtWithTwo et = new ExprStmtWithTwo(new ExprStmtWithTwo(new ExprStmtIdentify("aaa", 15), Operator.ADD, new ExprStmtIdentify("a", 15), 15), Operator.GTEQ, new ExprStmtData(TypeUtils.transferType("5"), 15), 15);
-        ifStmt.setCondition(et);
-
-
-        BlockStmt ifBlock = new BlockStmt(16);
-        VarAssignStmt vr1 = new VarAssignStmt(17);
-        vr1.setDataName("ddd");
-
-
-        vr1.setData(new ExprStmtData(TypeUtils.transferType("9999"), 17));
-        ifBlock.getNodes().add(vr1);
+        LocalVarDeclMultiStmt cs2 = LocalVarDeclMultiStmt.builder().lineNum(12)
+                .dataName("bbb")
+                .data(et2).build();
 
 
-        ifStmt.setBlock(ifBlock);
+        LocalVarDeclMultiStmt cs3 = LocalVarDeclMultiStmt.builder().lineNum(13)
+                .dataName("a")
+                .data(
+                        ExprStmtData.builder().lineNum(13).data(TypeUtils.transferType("3.1415926")).build()
 
-        BlockStmt elseBlock = new BlockStmt(18);
-        VarAssignStmt vr2 = new VarAssignStmt(19);
-        vr2.setDataName("ddd");
-
-        vr2.setData(new ExprStmtData(TypeUtils.transferType("10000"), 19));
-        elseBlock.getNodes().add(vr2);
-
-        ifStmt.setElseBlock(elseBlock);
+                ).build();
 
 
-        blockStmt.getNodes().add(cs1);
-        blockStmt.getNodes().add(cs2);
-        blockStmt.getNodes().add(cs3);
-        blockStmt.getNodes().add(ifStmt);
-
-        BuildInFunction.OutStmt out = new BuildInFunction.OutStmt(20);
-        ExprStmtWithTwo et2 = new ExprStmtWithTwo(new ExprStmtIdentify("ddd", 15), Operator.ADD, new ExprStmtIdentify("a", 15), 15);
-        out.setExpr(et2);
-
-        blockStmt.getNodes().add(out);
+        ExprStmtWithTwo et1 = ExprStmtWithTwo.builder().lineNum(15)
+                .left(ExprStmtIdentify.builder().lineNum(15).idName("aaa").build())
+                .op(Operator.ADD)
+                .right(ExprStmtIdentify.builder().lineNum(15).idName("a").build())
+                .build();
 
 
-        BuildInFunction.OutStmt out2 = new BuildInFunction.OutStmt(21);
-        ExprStmtWithTwo et3 = new ExprStmtWithTwo(new ExprStmtData("asdf", 15), Operator.ADD, new ExprStmtIdentify("a", 15), 15);
-        out2.setExpr(et3);
-
-        blockStmt.getNodes().add(out2);
-
-        VarAssignStmt w1 = new VarAssignStmt(23);
-        w1.setDataName("w1");
-        w1.setData(new ExprStmtData(TypeUtils.transferType("1"), 23));
-        blockStmt.getNodes().add(w1);
-
-        WhileStmt ws = new WhileStmt(22);
+        ExprStmtWithTwo et = ExprStmtWithTwo.builder().lineNum(15)
+                .left(et1)
+                .op(Operator.GTEQ)
+                .right(ExprStmtData.builder().lineNum(15).data(TypeUtils.transferType("5")).build())
+                .build();
 
 
-        ws.setCondition(new ExprStmtWithTwo(new ExprStmtIdentify("w1", 24), Operator.LTEQ, new ExprStmtData(TypeUtils.transferType("10"), 24), 24));
+        LocalVarDeclMultiStmt vr1 = LocalVarDeclMultiStmt.builder().lineNum(15).dataName("ddd").data(
+                ExprStmtData.builder().lineNum(16).data(TypeUtils.transferType("9999")).build()
+        ).build();
 
 
-        BlockStmt whileBlock = new BlockStmt(22);
-        ConstAssignStmt cs4 = new ConstAssignStmt(22);
-        cs4.setDataName("a");
-        cs4.setData(new ExprStmtWithTwo(new ExprStmtIdentify("a", 13), Operator.ADD, new ExprStmtData(TypeUtils.transferType("1"), 13), 22));
-        whileBlock.getNodes().add(cs4);
+        BlockStmt ifBlock = BlockStmt.builder().lineNum(16)
+                .node(vr1).build();
 
 
-        VarAssignStmt w2 = new VarAssignStmt(26);
-        w2.setDataName("w1");
-        w2.setData(new ExprStmtWithTwo(new ExprStmtIdentify("w1", 26), Operator.ADD, new ExprStmtData(TypeUtils.transferType("1"), 26), 26));
-        whileBlock.getNodes().add(w2);
+        LocalVarDeclMultiStmt vr2 = LocalVarDeclMultiStmt.builder().lineNum(19).dataName("ddd")
+                .data(ExprStmtData.builder().lineNum(19)
+                        .data(TypeUtils.transferType("10000")).build()).build();
 
 
-        VarAssignStmt _p1 = new VarAssignStmt(28);
-        _p1.setDataName("p1");
-        _p1.setData(new ExprStmtWithTwo(new ExprStmtIdentify("p1", 27), Operator.ADD, new ExprStmtData(TypeUtils.transferType("1"), 27), 27));
+        BlockStmt elseBlock = BlockStmt.builder().lineNum(18)
+                .node(vr2).build();
+
+        IfStmt ifStmt = IfStmt.builder().lineNum(14)
+                .condition(et)
+                .block(ifBlock)
+                .elseBlock(elseBlock).build();
 
 
-        VarAssignStmt _p2 = new VarAssignStmt(29);
-        _p2.setDataName("p2");
-        _p2.setData(new ExprStmtWithTwo(new ExprStmtIdentify("p1", 29), Operator.ADD, new ExprStmtData(TypeUtils.transferType("1"), 29), 29));
-
-        whileBlock.getNodes().add(_p1);
-        whileBlock.getNodes().add(_p2);
-
-
-        BuildInFunction.OutStmt out3 = new BuildInFunction.OutStmt(23);
-        out3.setExpr(new ExprStmtIdentify("w1", 23));
-        whileBlock.getNodes().add(out3);
+        ExprStmtWithTwo et22 = ExprStmtWithTwo.builder().lineNum(15)
+                .left(ExprStmtIdentify.builder().lineNum(15).idName("ddd").build())
+                .op(Operator.ADD)
+                .right(ExprStmtIdentify.builder().lineNum(15).idName("a").build())
+                .build();
 
 
-        ws.setBlock(whileBlock);
+        BuildInFunction.OutStmt out = BuildInFunction.OutStmt.builder().lineNum(15).node(
+                ExprList.builder().expr(et22).build()
 
 
-        blockStmt.getNodes().add(ws);
+        ).build();
 
 
-        RetStmt rs = new RetStmt(30);
-        rs.getRets().add(new ExprStmtIdentify("p1", 30));
-        rs.getRets().add(new ExprStmtIdentify("p2", 30));
+        ExprStmtWithTwo et3 = ExprStmtWithTwo.builder().lineNum(15)
+                .left(ExprStmtData.builder().lineNum(15).data("asdf").build())
+                .op(Operator.ADD)
+                .right(ExprStmtIdentify.builder().lineNum(15).idName("a").build())
+                .build();
 
-        blockStmt.getNodes().add(rs);
+
+        BuildInFunction.OutStmt out2 = BuildInFunction.OutStmt.builder().lineNum(13).node(
+                ExprList.builder().expr(et3).build()
+
+
+        ).build();
+
+
+        LocalVarDeclMultiStmt w1 = LocalVarDeclMultiStmt.builder().lineNum(23)
+                .dataName("w1")
+                .data(ExprStmtData.builder().lineNum(23).data(TypeUtils.transferType("1")).build())
+                .build();
+
+
+        VarAssignMultiStmt cs4 = VarAssignMultiStmt.builder().lineNum(24)
+                .dataName("a")
+                .data(
+                        ExprStmtWithTwo.builder().left(ExprStmtIdentify.builder().lineNum(24).idName("a").build())
+                                .op(Operator.ADD)
+                                .right(ExprStmtData.builder().lineNum(24).data(TypeUtils.transferType("1")).build())
+                                .build()
+
+                )
+                .build();
+
+
+        VarAssignMultiStmt w2 = VarAssignMultiStmt.builder().lineNum(26)
+                .dataName("w1")
+                .data(
+                        ExprStmtWithTwo.builder().lineNum(26)
+                                .left(ExprStmtIdentify.builder().lineNum(26).idName("w1").build())
+                                .op(Operator.ADD)
+                                .right(ExprStmtData.builder().lineNum(26).data(TypeUtils.transferType("1")).build())
+                                .build()
+
+                )
+                .build();
+
+
+        VarAssignMultiStmt _p1 = VarAssignMultiStmt.builder().lineNum(28)
+                .dataName("p1")
+                .data(
+                        ExprStmtWithTwo.builder().lineNum(28)
+                                .left(ExprStmtIdentify.builder().lineNum(28).idName("p1").build())
+                                .op(Operator.ADD)
+                                .right(ExprStmtData.builder().lineNum(28).data(TypeUtils.transferType("1")).build())
+                                .build()
+
+                )
+                .build();
+
+
+        VarAssignMultiStmt _p2 = VarAssignMultiStmt.builder().lineNum(29)
+                .dataName("p2")
+                .data(
+                        ExprStmtWithTwo.builder().lineNum(29)
+                                .left(ExprStmtIdentify.builder().lineNum(29).idName("p2").build())
+                                .op(Operator.ADD)
+                                .right(ExprStmtData.builder().lineNum(29).data(TypeUtils.transferType("1")).build())
+                                .build()
+
+                )
+                .build();
+
+        BuildInFunction.OutStmt out3 = BuildInFunction.OutStmt.builder().lineNum(23).node(
+
+                ExprList.builder().expr(ExprStmtIdentify.builder().lineNum(23).idName("w1").build()).build()
+
+        ).build();
+
+
+        BlockStmt whileBlock = BlockStmt.builder().lineNum(22)
+                .node(cs4)
+                .node(w2)
+                .node(_p1)
+                .node(_p2)
+                .node(out3)
+                .build();
+
+
+        WhileStmt ws = WhileStmt.builder().lineNum(22)
+                .condition(ExprStmtWithTwo.builder()
+                        .left(ExprStmtIdentify.builder().lineNum(24).idName("w1").build())
+                        .op(Operator.LTEQ)
+                        .right(ExprStmtData.builder().lineNum(24).data(TypeUtils.transferType("10")).build())
+                        .build()
+                ).block(whileBlock).build();
+
+
+        RetStmt rs = RetStmt.builder().lineNum(30)
+                .rets(
+                        ExprList.builder().expr(ExprStmtIdentify.builder().lineNum(30).idName("p1").build()).expr(ExprStmtIdentify.builder().lineNum(30).idName("p2").build()).build()
+                )
+                .build();
+
+
+        BlockStmt blockStmt = BlockStmt.builder().lineNum(10)
+                .node(cs1)
+                .node(cs2)
+                .node(cs3)
+                .node(ifStmt)
+                .node(out)
+                .node(out2)
+                .node(w1)
+                .node(ws)
+                .node(rs)
+                .build();
 
 
         return blockStmt;

@@ -14,7 +14,7 @@ import java.util.List;
  */
 @Builder
 @Data
-public class VarAssignMultiStmt extends SyntaxNode {
+public class GlobalVarDeclMultiStmt extends SyntaxNode {
     private int lineNum;
     @Singular
     List<String> dataNames = new ArrayList<>();
@@ -24,10 +24,13 @@ public class VarAssignMultiStmt extends SyntaxNode {
     @Override
     public void compile(Compiler compiler) {
         data.compile(compiler);
+
         //反过来取栈数据
         for(int i=dataNames.size()-1;i>=0;i--){
-            compiler.insertOpCode(Opcode.VARASSIGN, getLineNum(), dataNames.get(i));
+            compiler.insertOpCode(Opcode.HEAPDECL, getLineNum(), dataNames.get(i));
         }
+
+
     }
 
     @Override
@@ -36,9 +39,10 @@ public class VarAssignMultiStmt extends SyntaxNode {
         for (String dataName : dataNames) {
             System.out.print(dataName + ",");
         }
-        System.out.print(" =");
-
+        System.out.print(" :=");
         data.dumpSourceCode();
+
+
         System.out.println();
     }
 

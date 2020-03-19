@@ -10,7 +10,7 @@ public class TypeUtils {
             return null;
         }
         if (o.toString().startsWith("\"")) {
-            return o.substring(1, o.length() - 1);
+            return o;
         } else if (o.contains(".")) {
             return Double.valueOf(o);
         } else {

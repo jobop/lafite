@@ -6,29 +6,28 @@ import lombok.Data;
 import lombok.Singular;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
- * Created by Enzo Cotter on 2020/3/14.
+ * Created by Enzo Cotter on 2020/3/19.
  */
 @Builder
 @Data
-public class SourceStmt extends SyntaxNode {
-    private int lineNum;
-    Namespace namespace;
-
+public class ParametersStmt extends SyntaxNode {
+    ParamIdentifierListStmt pids = null;
 
     @Override
     public void compile(Compiler compiler) {
-        namespace.compile(compiler);
+        if (null != pids) {
+            pids.compile(compiler);
+        }
+
     }
 
     @Override
     public void dumpSourceCode() {
-
-        namespace.dumpSourceCode();
-
+        if (null != pids) {
+            pids.dumpSourceCode();
+        }
     }
 }

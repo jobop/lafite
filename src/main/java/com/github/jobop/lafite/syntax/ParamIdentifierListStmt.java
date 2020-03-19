@@ -6,37 +6,31 @@ import lombok.Data;
 import lombok.Singular;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
- * Created by Enzo Cotter on 2020/3/14.
+ * Created by Enzo Cotter on 2020/3/19.
  */
-@Builder(toBuilder = true)
+@Builder
 @Data
-public class Namespace extends SyntaxNode {
-    private int lineNum;
-    private String nameSpaceName;
+public class ParamIdentifierListStmt extends SyntaxNode {
+    //PARAM_IDENTIFIER
     @Singular
-    List<SyntaxNode> nodes = new ArrayList<>();
-
+    private List<SyntaxNode> nodes = new ArrayList<>();
 
     @Override
     public void compile(Compiler compiler) {
         for (SyntaxNode node : nodes) {
             node.compile(compiler);
         }
+
     }
 
     @Override
     public void dumpSourceCode() {
-        System.out.println("namespace"+" "+nameSpaceName);
         for (SyntaxNode node : nodes) {
             node.dumpSourceCode();
+            System.out.print(",");
         }
-
     }
-
-
 }
