@@ -31,5 +31,5 @@ func test(){
         var4=var4+1
     }
     out "var4新值:",var4,RN
-    return var4,"fuck"
+    return var4,"hehe"
 }
