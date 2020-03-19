@@ -9,5 +9,6 @@ func sayHello(name){
     //测试方法
     v1,v2:=bbb.test()
     out v1," ",v2,RN
+    ccc.test()
 }
 

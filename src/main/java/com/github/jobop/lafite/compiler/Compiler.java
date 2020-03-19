@@ -12,15 +12,18 @@ import com.github.jobop.lafite.utils.FileUtils;
 import org.antlr.v4.runtime.ParserRuleContext;
 import sun.security.provider.MD5;
 import sun.security.rsa.RSASignature;
+import sun.tools.java.CompilerError;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by Enzo Cotter on 2020/3/11.
  */
 public class Compiler {
 
+    private AtomicBoolean compiled = new AtomicBoolean(false);
     List<SyntaxNode> globalNodes = new ArrayList<>();
     List<SyntaxNode> localNodes = new ArrayList<>();
 
@@ -106,14 +109,17 @@ public class Compiler {
     }
 
     public void compile() {
-        //先编译全局变量
-        for (SyntaxNode globalNode : globalNodes) {
-            globalNode.compile(this);
+        if (compiled.compareAndSet(false, true)) {
+            //先编译全局变量
+            for (SyntaxNode globalNode : globalNodes) {
+                globalNode.compile(this);
+            }
+
+            for (SyntaxNode localNode : localNodes) {
+                localNode.compile(this);
+            }
         }
 
-        for (SyntaxNode localNode : localNodes) {
-            localNode.compile(this);
-        }
     }
 
 }

@@ -1,0 +1,5 @@
+namespace ccc
+
+func test(){
+    out "我是ccc",RN
+}

@@ -25,7 +25,7 @@ import java.io.*;
 public class Main {
     public static void main(String[] args) throws Exception {
         String sourceDir = "/Users/zhengwei/projects/java/lafite/src/main/resources/test_script";
-        String outputFile = "/Users/zhengwei/projects/java/lafite/src/main/resources/test_script/bin/bin.l";
+        String outputFile = "/Users/zhengwei/projects/java/lafite/src/main/resources/test_script/bin/output.l";
         CompileUtils.compiler(sourceDir, outputFile);
 
         RuntimeUtils.execute(outputFile);

@@ -43,6 +43,7 @@ public class CompileUtils {
                 }
             }
         }
+        compiler.compile();
         compiler.genFile(new File(outputFile));
     }
 }
