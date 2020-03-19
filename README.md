@@ -13,3 +13,4 @@
 * 弱类型，方法支持多值返回，变量支持多批量赋值。
 * 前期纯属练手，后续拟增加协程、闭包等功能支持。
 
+![avatar](https://github.com/jobop/lafite/blob/master/1584625819392.jpg)
