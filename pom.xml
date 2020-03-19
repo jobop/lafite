@@ -9,42 +9,6 @@
     <version>1.0-SNAPSHOT</version>
     <build>
         <plugins>
-            <!--<plugin>-->
-            <!--<groupId>de.jflex</groupId>-->
-            <!--<artifactId>jflex-maven-plugin</artifactId>-->
-            <!--<version>1.8.1</version>-->
-            <!--<executions>-->
-            <!--<execution>-->
-            <!--<goals>-->
-            <!--<goal>generate</goal>-->
-            <!--</goals>-->
-            <!--<configuration>-->
-            <!--<outputDirectory>src/main/java/com/github/jobop/lafite</outputDirectory>-->
-            <!--<lexDefinitions>-->
-            <!--<lexDefinition>src/main/flex</lexDefinition>-->
-            <!--</lexDefinitions>-->
-            <!--</configuration>-->
-            <!--</execution>-->
-            <!--</executions>-->
-            <!--</plugin>-->
-
-            <!--<plugin>-->
-            <!--<groupId>de.jflex</groupId>-->
-            <!--<artifactId>cup-maven-plugin</artifactId>-->
-            <!--<version>1.2</version>-->
-            <!--<executions>-->
-            <!--<execution>-->
-            <!--<goals>-->
-            <!--<goal>generate</goal>-->
-            <!--</goals>-->
-            <!--<configuration>-->
-            <!--<generatedSourcesDirectory>src/main/java/com/github/jobop/lafite</generatedSourcesDirectory>-->
-            <!--<cupSourceDirectory>src/main/cup</cupSourceDirectory>-->
-            <!--</configuration>-->
-            <!--</execution>-->
-            <!--</executions>-->
-            <!--</plugin>-->
-
             <plugin>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4-maven-plugin</artifactId>

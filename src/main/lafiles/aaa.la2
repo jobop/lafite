@@ -1,5 +1,0 @@
-namespace main
-
-func main(){
-    aaa.ccc(2,3)
-}

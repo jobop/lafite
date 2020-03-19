@@ -15,7 +15,7 @@ import java.util.Stack;
  * Created by Enzo Cotter on 2020/3/18.
  */
 public class LafiteParseVisitorImpl extends LafiteParserBaseVisitor<Object> {
-    //TODO:
+    List<SyntaxNode> globalNodes = new ArrayList<>();
     private Namespace currentNamespace;
 
     private FunctionStmt currentFunction;
@@ -32,15 +32,15 @@ public class LafiteParseVisitorImpl extends LafiteParserBaseVisitor<Object> {
         //解析namespace
         currentNamespace = (Namespace) visit(ctx.namespaceClause());
 
-        //解析变量定义
-        List<SyntaxNode> nodes = new ArrayList<>();
+        //解析全局变量定义
+
         if (null != ctx.shortVarDecl()) {
             for (LafiteParser.ShortVarDeclContext context : ctx.shortVarDecl()) {
-                nodes.add((SyntaxNode) visit(context));
+                globalNodes.add((SyntaxNode) visit(context));
             }
         }
 
-
+        List<SyntaxNode> nodes = new ArrayList<>();
         if (null != ctx.functionDecl()) {
             for (LafiteParser.FunctionDeclContext functionDecl : ctx.functionDecl()) {
                 nodes.add((SyntaxNode) visit(functionDecl));
@@ -482,4 +482,17 @@ public class LafiteParseVisitorImpl extends LafiteParserBaseVisitor<Object> {
     public void dumpSourceCode() {
         currentSource.dumpSourceCode();
     }
+
+    public List<SyntaxNode> getGlobalNodes() {
+        return globalNodes;
+    }
+
+    public void setGlobalNodes(List<SyntaxNode> globalNodes) {
+        this.globalNodes = globalNodes;
+    }
+
+    public SyntaxNode getCurrentSource() {
+        return currentSource;
+    }
+
 }

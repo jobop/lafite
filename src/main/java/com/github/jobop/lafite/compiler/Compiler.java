@@ -1,10 +1,12 @@
 package com.github.jobop.lafite.compiler;
 
 import com.alibaba.fastjson.JSON;
+import com.github.jobop.lafite.interpreter.LafiteParseVisitorImpl;
 import com.github.jobop.lafite.runtime.opcode.Opcode;
 import com.github.jobop.lafite.runtime.opcode.OpcodeUtils;
 import com.github.jobop.lafite.runtime.utils.StringUtils;
 import com.github.jobop.lafite.syntax.Namespace;
+import com.github.jobop.lafite.syntax.SourceStmt;
 import com.github.jobop.lafite.syntax.SyntaxNode;
 import com.github.jobop.lafite.utils.FileUtils;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -18,6 +20,9 @@ import java.util.*;
  * Created by Enzo Cotter on 2020/3/11.
  */
 public class Compiler {
+
+    List<SyntaxNode> globalNodes = new ArrayList<>();
+    List<SyntaxNode> localNodes = new ArrayList<>();
 
 
     private HashMap<String, FunctionInfo> functionPosMap = new HashMap<>();
@@ -46,7 +51,8 @@ public class Compiler {
         for (String byteCodeLine : getAssembByteCode()) {
             sb.append(byteCodeLine).append("\r\n");
         }
-        return StringUtils.bytesToHexString(sb.toString().getBytes());
+
+        return StringUtils.bytesToHexString(sb.toString().trim().getBytes());
     }
 
     public void dumpByteCode() {
@@ -92,6 +98,22 @@ public class Compiler {
 
     public void pushNode(SyntaxNode currentNode) {
         nodeStack.push(currentNode);
+    }
+
+    public void add(LafiteParseVisitorImpl visitor) {
+        globalNodes.addAll(visitor.getGlobalNodes());
+        localNodes.addAll(Arrays.asList(visitor.getCurrentSource()));
+    }
+
+    public void compile() {
+        //先编译全局变量
+        for (SyntaxNode globalNode : globalNodes) {
+            globalNode.compile(this);
+        }
+
+        for (SyntaxNode localNode : localNodes) {
+            localNode.compile(this);
+        }
     }
 
 }

@@ -1,17 +1,7 @@
-namespace main
+namespace bbb
+
 //全局变量和多变量定义
 CONST1,CONST2,RN:=111,222.01,"\r\n"
-
-func main(){
-    sayHello("Lafite")
-}
-
-func sayHello(name){
-    out "Hello ",name,"!!!",RN
-    //测试方法
-    v1,v2:=test()
-    out v1," ",v2,RN
-}
 
 func test(){
     out "CONST1=",CONST1," CONST2=",CONST2,RN

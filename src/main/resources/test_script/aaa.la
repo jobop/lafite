@@ -1,0 +1,13 @@
+namespace main
+
+func main(){
+    sayHello("Lafite")
+}
+
+func sayHello(name){
+    out "Hello ",name,"!!!",RN
+    //测试方法
+    v1,v2:=bbb.test()
+    out v1," ",v2,RN
+}
+
